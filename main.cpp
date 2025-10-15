@@ -40,6 +40,10 @@ std::string tokenTypeToString(TokenType type) {
         case TokenType::AND: return "AND (&&)";
         case TokenType::OR: return "OR (||)";
         case TokenType::NOT: return "NOT (!)";
+
+        case TokenType::LSQBRA: return "LSQBRA ([)";
+        case TokenType::RSQBRA: return "RSQBRA (])";
+
         case TokenType::LBRACE: return "LBRACE ({)";
         case TokenType::RBRACE: return "RBRACE (})";
         case TokenType::LPAREN: return "LPAREN (()";

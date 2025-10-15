@@ -167,6 +167,10 @@ Token Lexer::nextToken() {
     }
 
     switch (currentChar) {
+        
+        case '[': advance(); return makeToken(TokenType::LSQBRA, "[");
+        case ']': advance(); return makeToken(TokenType::RSQBRA, "]");
+        
         case '{': advance(); return makeToken(TokenType::LBRACE, "{");
         case '}': advance(); return makeToken(TokenType::RBRACE, "}");
         case '(': advance(); return makeToken(TokenType::LPAREN, "(");
