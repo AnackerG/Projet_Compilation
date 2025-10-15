@@ -8,14 +8,15 @@
 %token CLASS
 %token CURLBRACKET_OPEN CURLBRACKET_CLOSE SEMI_COLON COMA SQUBRACKET_OPEN SQUBRACKET_CLOSE POINT BRACKET_OPEN BRACKET_CLOSE
 %token BOOLEAN INT
-%token PUBLIC STATIC VOID EXTENDS MAIN_C STRING_C
-%token SET
+%token PUBLIC STATIC VOID EXTENDS MAIN_C STRING_C RETURN
+%token SET IDENT
 %token NEW THIS
 %token NULL EOF TRUE FALSE
 %token NOT EQUALS OR AND DIFFERENT SMALLER SMALLER_OR_EQUAL BIGGER BIGGER_OR_EQUAL INSTANCE_OF
-%token PLUS MINES MULTIPLY DIVISION REMAIN NEGATIVE CAST
+%token PLUS MINES TIMES DIVIDE REMAIN NEGATIVE CAST
 %token MAIN
 %token INTEGER STRING
+%token FOR IF ELSE
 
 /* Operator precedence and associativity (optional but common) */
 %right SET
@@ -24,7 +25,7 @@
 %left EQUALS DIFFERENT
 %left SMALLER SMALLER_OR_EQUAL BIGGER BIGGER_OR_EQUAL INSTANCE_OF
 %left PLUS MINES
-%left MULTIPLY DIVISION REMAIN
+%left TIMES DIVIDE REMAIN
 %left NEGATIVE NOT CAST
 %left POINT
 
@@ -32,50 +33,41 @@
 %%
 /* Grammar rules and semantic actions */
 
-expr:
-      expr PLUS expr    { printf("Add\n"); }
-    | expr MINUS expr   { printf("Subtract\n"); }
-    | expr TIMES expr   { printf("Multiply\n"); }
-    | expr DIVIDE expr  { printf("Divide\n"); }
-    | LPAREN expr RPAREN { printf("Parenthesized\n"); }
-    | NUMBER            { printf("Number\n"); }
-    ;
-
 file:
     class_star class_Main EOF
     ;
 
 class:
-    CLASS ident CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE
-    | CLASS ident EXTENDS ident CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE
+    CLASS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE
+    | CLASS IDENT EXTENDS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE
     ;
 
 decl:
-    type ident SEMI_COLON 
+    type IDENT SEMI_COLON 
     | constructor
     | method
     ;
 
 constructor:
-    ident BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+    IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
 
 method:
-    type ident BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
-    | VOID ident BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+    type IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+    | VOID IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
     ;
 
 params:
-    type ident
-    | type ident COMA params
+    type IDENT
+    | type IDENT COMA params
     ;
 
 type: BOOLEAN
     | INT
-    | ident
+    | IDENT
     ;
 
 class_Main:
-    CLASS MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C ident SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+    CLASS MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
     ;
 
 expr:
@@ -86,13 +78,13 @@ expr:
     | THIS
     | NULL
     | BRACKET_OPEN expr BRACKET_CLOSE
-    | ident
-    | expr POINT ident
-    | ident SET expr
-    | expr POINT ident SET expr
-    | ident BRACKET_OPEN lexpr_opt  BRACKET_CLOSE
-    | expr POINT ident BRACKET_OPEN lexpr_opt BRACKET_CLOSE
-    | NEW ident BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+    | IDENT
+    | expr POINT IDENT
+    | IDENT SET expr
+    | expr POINT IDENT SET expr
+    | IDENT BRACKET_OPEN lexpr_opt  BRACKET_CLOSE
+    | expr POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+    | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
     | NOT expr
     | NEGATIVE expr
     | expr binop expr
@@ -122,25 +114,25 @@ lexpr:
     ;
 
 stmt :
-    /* empty */ SEMICOLON
-    | expr SEMICOLON
-    | type ident SEMICOLON
-    | type ident SET expr SEMICOLON
-    | IF BRACKET_OPEN expr BRACKET_CLOSE stmt SEMICOLON
-    | IF BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE stmt SEMICOLON
+    /* empty */ SEMI_COLON
+    | expr SEMI_COLON
+    | type IDENT SEMI_COLON
+    | type IDENT SET expr SEMI_COLON
+    | IF BRACKET_OPEN expr BRACKET_CLOSE stmt SEMI_COLON
+    | IF BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE stmt SEMI_COLON
 
-    | FOR BRACKET_OPEN SEMICOLON SEMICOLON BRACKET_CLOSE stmt SEMICOLON                  
-    | FOR BRACKET_OPEN SEMICOLON SEMICOLON stmt BRACKET_CLOSE stmt SEMICOLON              
-    | FOR BRACKET_OPEN SEMICOLON stmt SEMICOLON BRACKET_CLOSE stmt SEMICOLON              
-    | FOR BRACKET_OPEN SEMICOLON stmt SEMICOLON stmt BRACKET_CLOSE stmt SEMICOLON        
-    | FOR BRACKET_OPEN stmt SEMICOLON SEMICOLON BRACKET_CLOSE stmt SEMICOLON              
-    | FOR BRACKET_OPEN stmt SEMICOLON SEMICOLON stmt BRACKET_CLOSE stmt SEMICOLON         
-    | FOR BRACKET_OPEN stmt SEMICOLON stmt SEMICOLON BRACKET_CLOSE stmt SEMICOLON        
-    | FOR BRACKET_OPEN stmt SEMICOLON stmt SEMICOLON stmt BRACKET_CLOSE stmt SEMICOLON    
+    | FOR BRACKET_OPEN SEMI_COLON SEMI_COLON BRACKET_CLOSE stmt SEMI_COLON                  
+    | FOR BRACKET_OPEN SEMI_COLON SEMI_COLON stmt BRACKET_CLOSE stmt SEMI_COLON              
+    | FOR BRACKET_OPEN SEMI_COLON stmt SEMI_COLON BRACKET_CLOSE stmt SEMI_COLON              
+    | FOR BRACKET_OPEN SEMI_COLON stmt SEMI_COLON stmt BRACKET_CLOSE stmt SEMI_COLON        
+    | FOR BRACKET_OPEN stmt SEMI_COLON SEMI_COLON BRACKET_CLOSE stmt SEMI_COLON              
+    | FOR BRACKET_OPEN stmt SEMI_COLON SEMI_COLON stmt BRACKET_CLOSE stmt SEMI_COLON         
+    | FOR BRACKET_OPEN stmt SEMI_COLON stmt SEMI_COLON BRACKET_CLOSE stmt SEMI_COLON        
+    | FOR BRACKET_OPEN stmt SEMI_COLON stmt SEMI_COLON stmt BRACKET_CLOSE stmt SEMI_COLON    
 
-    | CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE SEMICOLON
-    | RETURN /*empty*/ SEMICOLON
-    | RETURN expr SEMICOLON
+    | CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE SEMI_COLON
+    | RETURN /*empty*/ SEMI_COLON
+    | RETURN expr SEMI_COLON
 ;
 
 params_opt:
@@ -153,8 +145,9 @@ lexpr_opt:
     | /* empty */
     ;
 
-expr_opt:
-    expr
+
+class_star:
+    class class_star
     | /* empty */
     ;
 
