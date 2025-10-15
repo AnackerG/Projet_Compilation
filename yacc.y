@@ -8,13 +8,14 @@
 %token CLASS
 %token CHEVRON_OPEN CHEVRON_CLOSE SEMI_COLON COMA SQUBRACKET_OPEN SQUBRACKET_CLOSE POINT BRACKET_OPEN BRACKET_CLOSE
 %token BOOLEAN INT
-%token PUBLIC STATIC VOID EXTENDS
+%token PUBLIC STATIC VOID EXTENDS MAIN_C STRING_C
 %token SET
 %token NEW THIS
-%token NULL EOF
+%token NULL EOF TRUE FALSE
 %token NOT EQUALS OR AND DIFFERENT SMALLER SMALLER_OR_EQUAL BIGGER BIGGER_OR_EQUAL INSTANCE_OF
-%token PLUS LESS MULTIPLY DIVISION REMAIN NEGATIVE NEGATE CAST
-
+%token PLUS LESS MULTIPLY DIVISION REMAIN NEGATIVE CAST
+%token MAIN
+%token INTEGER STRING
 
 /* Operator precedence and associativity (optional but common) */
 %right SET
@@ -24,7 +25,7 @@
 %left SMALLER SMALLER_OR_EQUAL BIGGER BIGGER_OR_EQUAL INSTANCE_OF
 %left PLUS LESS
 %left MULTIPLY DIVISION REMAIN
-%left NEGATE NOT CAST
+%left NEGATIVE NOT CAST
 %left POINT
 
 
@@ -51,10 +52,74 @@ class:
 
 decl:
     type ident SEMI_COLON 
-    | constructor〉
+    | constructor
     | method
     ;
 
+constructor:
+    ident BRACKET_OPEN params_opt BRACKET_CLOSE CHEVRON_OPEN stmt_star CHEVRON_CLOSE
+
+method:
+    type ident BRACKET_OPEN params_opt BRACKET_CLOSE CHEVRON_OPEN stmt_star CHEVRON_CLOSE
+    | VOID ident BRACKET_OPEN params_opt BRACKET_CLOSE CHEVRON_OPEN stmt_star CHEVRON_CLOSE
+    ;
+
+params:
+    type ident
+    | type ident COMA params
+    ;
+
+type: BOOLEAN
+    | INT
+    | ident
+    ;
+
+class_Main:
+    CLASS MAIN CHEVRON_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C ident SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CHEVRON_OPEN stmt_star CHEVRON_CLOSE CHEVRON_CLOSE
+    ;
+
+expr:
+    INTEGER
+    | STRING
+    | TRUE 
+    | FALSE
+    | THIS
+    | NULL
+    | BRACKET_OPEN expr BRACKET_CLOSE
+    | ident
+    | expr POINT ident
+    | ident SET expr
+    | expr POINT ident SET expr
+    | ident BRACKET_OPEN lexpr_opt  BRACKET_CLOSE
+    | expr POINT ident BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+    | NEW ident BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+    | NOT expr
+    | NEGATIVE expr
+    | expr binop expr
+    | BRACKET_OPEN type BRACKET_CLOSE expr
+    | expr INSTANCE_OF type
+    ;
+
+binop:
+    EQUALS 
+    | DIFFERENT 
+    | SMALLER 
+    | SMALLER_OR_EQUAL 
+    | BIGGER 
+    | BIGGER_OR_EQUAL 
+    | PLUS 
+    | LESS 
+    | TIMES 
+    | DIVIDE 
+    | REMAIN 
+    | AND 
+    | OR
+    ;
+
+lexpr:
+    expr
+    | expr COMA lexpr
+    ;
 
 
 params_opt:
@@ -77,6 +142,10 @@ stmt_star:
     | /* empty */
     ;
 
+decl_star:
+    decl decl_star
+    | /* empty */
+    ;
 
 %%
 /* C helper code section */
@@ -90,5 +159,3 @@ int yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
     return 0;
 }
-
-
