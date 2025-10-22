@@ -13,10 +13,12 @@
 %token NEW THIS
 %token NULL EOF TRUE FALSE
 %token NOT EQUALS OR AND DIFFERENT SMALLER SMALLER_OR_EQUAL BIGGER BIGGER_OR_EQUAL INSTANCE_OF
-%token PLUS MINES TIMES DIVIDE REMAIN NEGATIVE CAST
+%token PLUS MINUS TIMES DIVIDE REMAIN NEGATIVE CAST
 %token MAIN
 %token INTEGER STRING
-%token FOR IF ELSE
+%token FOR IF 
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
 
 /* Operator precedence and associativity (optional but common) */
 %right SET
@@ -24,7 +26,7 @@
 %left AND
 %left EQUALS DIFFERENT
 %left SMALLER SMALLER_OR_EQUAL BIGGER BIGGER_OR_EQUAL INSTANCE_OF
-%left PLUS MINES
+%left PLUS MINUS
 %left TIMES DIVIDE REMAIN
 %left NEGATIVE NOT CAST
 %left POINT
@@ -34,12 +36,14 @@
 /* Grammar rules and semantic actions */
 
 file:
+    CLASS class_Main
+    | CLASS 
     class_star class_Main EOF
     ;
 
 class:
-    CLASS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE
-    | CLASS IDENT EXTENDS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE
+    IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS
+    | IDENT EXTENDS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS
     ;
 
 decl:
@@ -67,7 +71,7 @@ type: BOOLEAN
     ;
 
 class_Main:
-    CLASS MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+    MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
     ;
 
 expr:
@@ -78,18 +82,26 @@ expr:
     | THIS
     | NULL
     | BRACKET_OPEN expr BRACKET_CLOSE
-    | IDENT
-    | expr POINT IDENT
-    | IDENT SET expr
-    | expr POINT IDENT SET expr
-    | IDENT BRACKET_OPEN lexpr_opt  BRACKET_CLOSE
-    | expr POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+    | IDENT expr_ident
+    | expr expr_expr
     | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
     | NOT expr
     | NEGATIVE expr
-    | expr binop expr
     | BRACKET_OPEN type BRACKET_CLOSE expr
-    | expr INSTANCE_OF type
+    ;
+
+expr_ident:
+    /* empty*/
+    | SET expr
+    | BRACKET_OPEN lexpr_opt  BRACKET_CLOSE
+    ;
+
+expr_expr:
+    POINT IDENT
+    | POINT IDENT SET expr
+    | POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+    | binop expr
+    | INSTANCE_OF type
     ;
 
 binop:
@@ -100,7 +112,7 @@ binop:
     | BIGGER 
     | BIGGER_OR_EQUAL 
     | PLUS 
-    | MINES 
+    | MINUS 
     | TIMES 
     | DIVIDE 
     | REMAIN 
@@ -118,17 +130,9 @@ stmt :
     | expr SEMI_COLON
     | type IDENT SEMI_COLON
     | type IDENT SET expr SEMI_COLON
-    | IF BRACKET_OPEN expr BRACKET_CLOSE stmt SEMI_COLON
-    | IF BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE stmt SEMI_COLON
-
-    | FOR BRACKET_OPEN SEMI_COLON SEMI_COLON BRACKET_CLOSE stmt SEMI_COLON                  
-    | FOR BRACKET_OPEN SEMI_COLON SEMI_COLON stmt BRACKET_CLOSE stmt SEMI_COLON              
-    | FOR BRACKET_OPEN SEMI_COLON stmt SEMI_COLON BRACKET_CLOSE stmt SEMI_COLON              
-    | FOR BRACKET_OPEN SEMI_COLON stmt SEMI_COLON stmt BRACKET_CLOSE stmt SEMI_COLON        
-    | FOR BRACKET_OPEN stmt SEMI_COLON SEMI_COLON BRACKET_CLOSE stmt SEMI_COLON              
-    | FOR BRACKET_OPEN stmt SEMI_COLON SEMI_COLON stmt BRACKET_CLOSE stmt SEMI_COLON         
-    | FOR BRACKET_OPEN stmt SEMI_COLON stmt SEMI_COLON BRACKET_CLOSE stmt SEMI_COLON        
-    | FOR BRACKET_OPEN stmt SEMI_COLON stmt SEMI_COLON stmt BRACKET_CLOSE stmt SEMI_COLON    
+    | IF BRACKET_OPEN expr BRACKET_CLOSE %prec LOWER_THAN_ELSE stmt SEMI_COLON
+    | IF BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE stmt SEMI_COLON       
+    | FOR BRACKET_OPEN expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt BRACKET_CLOSE stmt SEMI_COLON    
 
     | CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE SEMI_COLON
     | RETURN /*empty*/ SEMI_COLON
@@ -140,6 +144,11 @@ params_opt:
     | /* empty */
     ;
 
+expr_opt:
+    expr
+    | /* empty */
+    ;
+
 lexpr_opt:
     lexpr
     | /* empty */
@@ -147,18 +156,18 @@ lexpr_opt:
 
 
 class_star:
-    class class_star
-    | /* empty */
-    ;
+    class_star class
+  | class
+  ;
 
 stmt_star:
-    stmt stmt_star
-    | /* empty */
+    stmt_star stmt
+    | stmt
     ;
 
 decl_star:
-    decl decl_star
-    | /* empty */
+    decl_star decl
+    | decl
     ;
 
 %%
