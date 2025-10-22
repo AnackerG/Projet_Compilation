@@ -91,7 +91,22 @@ expr:
   | NOT expr
   | NEGATIVE expr            %prec NEGATIVE
   | BRACKET_OPEN type BRACKET_CLOSE expr  %prec CAST
-  | expr binop expr
+  | expr_sans_binop binop expr
+  ;
+
+expr_sans_binop:
+    INTEGER
+  | STRING
+  | TRUE
+  | FALSE
+  | THIS
+  | NULL
+  | BRACKET_OPEN expr BRACKET_CLOSE
+  | IDENT postfix_expr
+  | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+  | NOT expr
+  | NEGATIVE expr            %prec NEGATIVE
+  | BRACKET_OPEN type BRACKET_CLOSE expr  %prec CAST
   ;
 
 postfix_expr:
