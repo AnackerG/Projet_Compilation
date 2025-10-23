@@ -102,11 +102,11 @@ expr_sans_binop:
   | THIS
   | NULL
   | BRACKET_OPEN expr BRACKET_CLOSE
-  | IDENT postfix_expr
+  | IDENT postfix_expr_sans_binop
   | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
-  | NOT expr
-  | NEGATIVE expr            %prec NEGATIVE
-  | BRACKET_OPEN type BRACKET_CLOSE expr  %prec CAST
+  | NOT expr_sans_binop
+  | NEGATIVE expr_sans_binop            %prec NEGATIVE
+  | BRACKET_OPEN type BRACKET_CLOSE expr_sans_binop  %prec CAST
   ;
 
 postfix_expr:
@@ -115,6 +115,16 @@ postfix_expr:
   | BRACKET_OPEN lexpr_opt BRACKET_CLOSE
   | POINT IDENT
   | POINT IDENT SET expr
+  | POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+  | INSTANCE_OF type
+  ;
+
+postfix_expr_sans_binop:
+    /* empty */
+  | SET expr_sans_binop
+  | BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+  | POINT IDENT
+  | POINT IDENT SET expr_sans_binop
   | POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
   | INSTANCE_OF type
   ;
