@@ -42,4 +42,4 @@ parser/grammar.tab.c parser/grammar.tab.h: parser/grammar.y
 
 # Nettoyage
 clean:
-	rm -f *.o lexer.o bridge.o grammar.tab.o run_lex run_pars
+	rm -f *.o lexer.o bridge.o grammar.tab.o run_lex run_pars parser/grammar.tab.*

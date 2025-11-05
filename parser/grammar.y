@@ -32,8 +32,8 @@ int yylex(void);
 %token SET  NEW THIS NULL_TOKEN TRUE FALSE NOT EQUALS OR AND
 %token DIFFERENT SMALLER SMALLER_OR_EQUAL BIGGER BIGGER_OR_EQUAL INSTANCE_OF
 %token PLUS MINUS TIMES DIVIDE REMAIN
-%token FOR IF ELSE  
-%token EOF_TOKEN
+%token FOR IF ELSE
+%token YYEOF 0 "end"; 
 %token MAIN
 %nonassoc LOWER_THAN_ELSE
 
@@ -54,7 +54,7 @@ int yylex(void);
 
 %%
 file:
-    CLASS class_star class_Main EOF_TOKEN
+    CLASS class_star class_Main
   ;
 
 class_star:
