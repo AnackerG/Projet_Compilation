@@ -1,5 +1,7 @@
 /* A Bison parser, made by GNU Bison 3.8.2.  */
 
+int there_is_an_error = 1;
+
 /* Bison implementation for Yacc-like parsers in C
 
    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
@@ -576,16 +578,16 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    59,    59,    62,    64,    68,    69,    72,    74,    78,
-      79,    80,    84,    88,    89,    92,    94,    98,    99,   103,
-     104,   105,   109,   114,   115,   116,   117,   118,   119,   120,
-     121,   122,   123,   124,   125,   126,   130,   131,   132,   133,
-     134,   135,   136,   137,   138,   139,   140,   141,   144,   146,
-     147,   148,   149,   150,   151,   154,   156,   157,   158,   159,
-     160,   161,   165,   166,   167,   168,   169,   170,   171,   172,
-     173,   174,   175,   176,   177,   180,   182,   186,   187,   190,
-     192,   196,   197,   198,   199,   200,   201,   202,   203,   204,
-     205,   208,   210
+       0,    57,    57,    60,    62,    66,    67,    70,    72,    76,
+      77,    78,    82,    86,    87,    90,    92,    96,    97,   101,
+     102,   103,   107,   112,   113,   114,   115,   116,   117,   118,
+     119,   120,   121,   122,   123,   124,   128,   129,   130,   131,
+     132,   133,   134,   135,   136,   137,   138,   139,   142,   144,
+     145,   146,   147,   148,   149,   152,   154,   155,   156,   157,
+     158,   159,   163,   164,   165,   166,   167,   168,   169,   170,
+     171,   172,   173,   174,   175,   178,   180,   184,   185,   188,
+     190,   194,   195,   196,   197,   198,   199,   200,   201,   202,
+     203,   206,   208
 };
 #endif
 
@@ -1206,6 +1208,9 @@ yybackup:
     {
       YYDPRINTF ((stderr, "Reading a token\n"));
       yychar = yylex ();
+      if (yychar == YYEOF) {
+        there_is_an_error = 0;
+      }
     }
 
   if (yychar <= YYEOF)
@@ -1340,7 +1345,11 @@ yyerrlab:
   if (!yyerrstatus)
     {
       ++yynerrs;
-      yyerror (YY_("syntax error"));
+      if (there_is_an_error) {
+        yyerror (YY_("syntax error"));
+      } else {
+        yyerror (YY_("EOF detected"));
+      }
     }
 
   if (yyerrstatus == 3)
@@ -1486,5 +1495,6 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 212 "parser/grammar.y"
+#line 210 "parser/grammar.y"
+
 

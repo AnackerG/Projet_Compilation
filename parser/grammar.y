@@ -52,8 +52,6 @@ int yylex(void);
 
 
 
-
-
 %%
 file:
     CLASS class_star class_Main EOF_TOKEN
@@ -210,3 +208,4 @@ expr_opt:
   | expr
   ;
 %%
+

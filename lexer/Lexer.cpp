@@ -20,7 +20,7 @@ std::unordered_map<std::string, TokenType> Lexer::keywords = {
     {"new", TokenType::KW_NEW},
     {"extends", TokenType::KW_EXTENDS},
     {"instanceof", TokenType::KW_INSTANCE_OF},
-    {"main", TokenType::KW_MAIN},
+    {"Main", TokenType::KW_MAIN},
     {"String", TokenType::KW_STRING_C},
     {"main", TokenType::KW_MAIN_C}, // si tu veux gérer main() spécifique
     {"set", TokenType::KW_SET}
