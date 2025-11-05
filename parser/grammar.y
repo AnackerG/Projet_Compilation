@@ -1,11 +1,39 @@
+%{
+#include <stdio.h>
+
+#ifdef cplusplus
+extern "C" {
+#endif
+
+void yyerror(const char* msg);
+int yylex(void);
+
+#ifdef cplusplus
+}
+#endif
+%}
+
+
+
+%union {
+    int ival;
+    char* str;
+}
+
+%token <str> IDENT STRING
+%token <ival> INTEGER
+
+
+
+
 %token CLASS CURLBRACKET_OPEN CURLBRACKET_CLOSE SEMI_COLON COMA
 %token SQUBRACKET_OPEN SQUBRACKET_CLOSE POINT BRACKET_OPEN BRACKET_CLOSE
 %token BOOLEAN INT PUBLIC STATIC VOID EXTENDS MAIN_C STRING_C RETURN
-%token SET IDENT NEW THIS NULL TRUE FALSE NOT EQUALS OR AND
+%token SET  NEW THIS NULL_TOKEN TRUE FALSE NOT EQUALS OR AND
 %token DIFFERENT SMALLER SMALLER_OR_EQUAL BIGGER BIGGER_OR_EQUAL INSTANCE_OF
 %token PLUS MINUS TIMES DIVIDE REMAIN
-%token FOR IF ELSE INTEGER STRING
-%token EOF
+%token FOR IF ELSE  
+%token EOF_TOKEN
 %token MAIN
 %nonassoc LOWER_THAN_ELSE
 
@@ -22,9 +50,13 @@
 %right CAST
 
 
+
+
+
+
 %%
 file:
-    CLASS class_star class_Main EOF
+    CLASS class_star class_Main EOF_TOKEN
   ;
 
 class_star:
@@ -84,7 +116,7 @@ expr:
   | TRUE
   | FALSE
   | THIS
-  | NULL
+  | NULL_TOKEN
   | BRACKET_OPEN expr BRACKET_CLOSE
   | IDENT postfix_expr
   | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
@@ -100,7 +132,7 @@ expr_sans_binop:
   | TRUE
   | FALSE
   | THIS
-  | NULL
+  | NULL_TOKEN
   | BRACKET_OPEN expr BRACKET_CLOSE
   | IDENT postfix_expr_sans_binop
   | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE

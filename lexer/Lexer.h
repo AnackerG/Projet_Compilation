@@ -9,6 +9,8 @@ public:
     explicit Lexer(const std::string& filename);
     Token nextToken();  // renvoie le token
     int peekChar();     // regarde le token (n'avance pas)
+    int getLine() const { return line; }
+
 
 
 private:
