@@ -168,6 +168,7 @@ extern "C" int yylex() {
             return MAIN;
         case TokenType::KW_EOF:
             std::cout << "TOKENTYPE: KW_EOF" << std::endl;
+            std::cout << "LE TEXTE A ETE LU EN ENTIER" << std::endl;
             return YYEOF;
 
         default:
