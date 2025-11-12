@@ -1,0 +1,2126 @@
+Rules useless in parser due to conflicts
+
+   48 postfix_expr: ε
+
+   56 postfix_expr_sans_binop: SET expr_sans_binop
+   59                        | POINT IDENT SET expr_sans_binop
+
+
+State 58 conflicts: 3 reduce/reduce
+State 91 conflicts: 3 reduce/reduce
+
+
+Grammar
+
+    0 $accept: file "end"
+
+    1 file: CLASS class_star class_Main
+
+    2 class_star: ε
+    3           | class_star class
+
+    4 class: IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS
+    5      | IDENT EXTENDS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS
+
+    6 decl_star: ε
+    7          | decl_star decl
+
+    8 decl: type IDENT SEMI_COLON
+    9     | constructor
+   10     | method
+
+   11 constructor: IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+   12 method: type IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+   13       | VOID IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+   14 params_opt: ε
+   15           | params
+
+   16 params: type IDENT
+   17       | params COMA type IDENT
+
+   18 type: BOOLEAN
+   19     | INT
+   20     | IDENT
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+   22 expr: INTEGER
+   23     | STRING
+   24     | TRUE
+   25     | FALSE
+   26     | THIS
+   27     | NULL_TOKEN
+   28     | BRACKET_OPEN expr BRACKET_CLOSE
+   29     | IDENT
+   30     | IDENT postfix_expr
+   31     | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   32     | NOT expr
+   33     | MINUS expr
+   34     | BRACKET_OPEN type BRACKET_CLOSE expr
+   35     | expr_sans_binop binop expr
+
+   36 expr_sans_binop: INTEGER
+   37                | STRING
+   38                | TRUE
+   39                | FALSE
+   40                | THIS
+   41                | NULL_TOKEN
+   42                | BRACKET_OPEN expr BRACKET_CLOSE
+   43                | IDENT postfix_expr_sans_binop
+   44                | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   45                | NOT expr_sans_binop
+   46                | MINUS expr_sans_binop
+   47                | BRACKET_OPEN type BRACKET_CLOSE expr_sans_binop
+
+   48 postfix_expr: ε
+   49             | SET expr
+   50             | BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   51             | POINT IDENT
+   52             | POINT IDENT SET expr
+   53             | POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   54             | INSTANCE_OF type
+
+   55 postfix_expr_sans_binop: ε
+   56                        | SET expr_sans_binop
+   57                        | BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   58                        | POINT IDENT
+   59                        | POINT IDENT SET expr_sans_binop
+   60                        | POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   61                        | INSTANCE_OF type
+
+   62 binop: EQUALS
+   63      | DIFFERENT
+   64      | SMALLER
+   65      | SMALLER_OR_EQUAL
+   66      | BIGGER
+   67      | BIGGER_OR_EQUAL
+   68      | PLUS
+   69      | MINUS
+   70      | TIMES
+   71      | DIVIDE
+   72      | REMAIN
+   73      | AND
+   74      | OR
+
+   75 lexpr_opt: ε
+   76          | lexpr
+
+   77 lexpr: expr
+   78      | lexpr COMA expr
+
+   79 stmt_star: ε
+   80          | stmt_star stmt
+
+   81 stmt: SEMI_COLON
+   82     | expr SEMI_COLON
+   83     | type IDENT SEMI_COLON
+   84     | type IDENT SET expr SEMI_COLON
+   85     | IF BRACKET_OPEN expr BRACKET_CLOSE stmt
+   86     | IF BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE stmt
+   87     | FOR BRACKET_OPEN expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt BRACKET_CLOSE stmt
+   88     | CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+   89     | RETURN SEMI_COLON
+   90     | RETURN expr SEMI_COLON
+
+   91 expr_opt: ε
+   92         | expr
+
+
+Terminals, with rules where they appear
+
+    "end" (0) 0
+    error (256)
+    IDENT <str> (258) 4 5 8 11 12 13 16 17 20 21 29 30 31 43 44 51 52 53 58 59 60 83 84
+    STRING <str> (259) 23 37
+    INTEGER <ival> (260) 22 36
+    CLASS (261) 1 4 5
+    CURLBRACKET_OPEN (262) 4 5 11 12 13 21 88
+    CURLBRACKET_CLOSE (263) 4 5 11 12 13 21 88
+    SEMI_COLON (264) 8 81 82 83 84 87 89 90
+    COMA (265) 17 78
+    SQUBRACKET_OPEN (266) 21
+    SQUBRACKET_CLOSE (267) 21
+    POINT (268) 51 52 53 58 59 60
+    BRACKET_OPEN (269) 11 12 13 21 28 31 34 42 44 47 50 53 57 60 85 86 87
+    BRACKET_CLOSE (270) 11 12 13 21 28 31 34 42 44 47 50 53 57 60 85 86 87
+    BOOLEAN (271) 18
+    INT (272) 19
+    PUBLIC (273) 21
+    STATIC (274) 21
+    VOID (275) 13 21
+    EXTENDS (276) 5
+    MAIN_C (277) 21
+    STRING_C (278) 21
+    RETURN (279) 89 90
+    SET (280) 49 52 56 59 84
+    NEW (281) 31 44
+    THIS (282) 26 40
+    NULL_TOKEN (283) 27 41
+    TRUE (284) 24 38
+    FALSE (285) 25 39
+    NOT (286) 32 45
+    EQUALS (287) 62
+    OR (288) 74
+    AND (289) 73
+    DIFFERENT (290) 63
+    SMALLER (291) 64
+    SMALLER_OR_EQUAL (292) 65
+    BIGGER (293) 66
+    BIGGER_OR_EQUAL (294) 67
+    INSTANCE_OF (295) 54 61
+    PLUS (296) 68
+    MINUS (297) 33 46 69
+    TIMES (298) 70
+    DIVIDE (299) 71
+    REMAIN (300) 72
+    FOR (301) 87
+    IF (302) 85 86
+    ELSE (303) 86
+    MAIN (304) 21
+    LOWER_THAN_ELSE (305)
+    NEGATIVE (306)
+    CAST (307)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (53)
+        on left: 0
+    file <node> (54)
+        on left: 1
+        on right: 0
+    class_star <node> (55)
+        on left: 2 3
+        on right: 1 3
+    class <node> (56)
+        on left: 4 5
+        on right: 3
+    decl_star <node> (57)
+        on left: 6 7
+        on right: 4 5 7
+    decl <node> (58)
+        on left: 8 9 10
+        on right: 7
+    constructor <node> (59)
+        on left: 11
+        on right: 9
+    method <node> (60)
+        on left: 12 13
+        on right: 10
+    params_opt <node> (61)
+        on left: 14 15
+        on right: 11 12 13
+    params <node> (62)
+        on left: 16 17
+        on right: 15 17
+    type <node> (63)
+        on left: 18 19 20
+        on right: 8 12 16 17 34 47 54 61 83 84
+    class_Main <node> (64)
+        on left: 21
+        on right: 1
+    expr <node> (65)
+        on left: 22 23 24 25 26 27 28 29 30 31 32 33 34 35
+        on right: 28 32 33 34 35 42 49 52 77 78 82 84 85 86 90 92
+    expr_sans_binop <node> (66)
+        on left: 36 37 38 39 40 41 42 43 44 45 46 47
+        on right: 35 45 46 47 56 59
+    postfix_expr <node> (67)
+        on left: 48 49 50 51 52 53 54
+        on right: 30
+    postfix_expr_sans_binop <node> (68)
+        on left: 55 56 57 58 59 60 61
+        on right: 43
+    binop <str> (69)
+        on left: 62 63 64 65 66 67 68 69 70 71 72 73 74
+        on right: 35
+    lexpr_opt <node> (70)
+        on left: 75 76
+        on right: 31 44 50 53 57 60
+    lexpr <node> (71)
+        on left: 77 78
+        on right: 76 78
+    stmt_star <node> (72)
+        on left: 79 80
+        on right: 11 12 13 21 80 88
+    stmt <node> (73)
+        on left: 81 82 83 84 85 86 87 88 89 90
+        on right: 80 85 86 87
+    expr_opt <node> (74)
+        on left: 91 92
+        on right: 87
+
+
+State 0
+
+    0 $accept: • file "end"
+
+    CLASS  shift, and go to state 1
+
+    file  go to state 2
+
+
+State 1
+
+    1 file: CLASS • class_star class_Main
+
+    $default  reduce using rule 2 (class_star)
+
+    class_star  go to state 3
+
+
+State 2
+
+    0 $accept: file • "end"
+
+    "end"  shift, and go to state 4
+
+
+State 3
+
+    1 file: CLASS class_star • class_Main
+    3 class_star: class_star • class
+
+    IDENT  shift, and go to state 5
+    MAIN   shift, and go to state 6
+
+    class       go to state 7
+    class_Main  go to state 8
+
+
+State 4
+
+    0 $accept: file "end" •
+
+    $default  accept
+
+
+State 5
+
+    4 class: IDENT • CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS
+    5      | IDENT • EXTENDS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS
+
+    CURLBRACKET_OPEN  shift, and go to state 9
+    EXTENDS           shift, and go to state 10
+
+
+State 6
+
+   21 class_Main: MAIN • CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    CURLBRACKET_OPEN  shift, and go to state 11
+
+
+State 7
+
+    3 class_star: class_star class •
+
+    $default  reduce using rule 3 (class_star)
+
+
+State 8
+
+    1 file: CLASS class_star class_Main •
+
+    $default  reduce using rule 1 (file)
+
+
+State 9
+
+    4 class: IDENT CURLBRACKET_OPEN • decl_star CURLBRACKET_CLOSE CLASS
+
+    $default  reduce using rule 6 (decl_star)
+
+    decl_star  go to state 12
+
+
+State 10
+
+    5 class: IDENT EXTENDS • IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS
+
+    IDENT  shift, and go to state 13
+
+
+State 11
+
+   21 class_Main: MAIN CURLBRACKET_OPEN • PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    PUBLIC  shift, and go to state 14
+
+
+State 12
+
+    4 class: IDENT CURLBRACKET_OPEN decl_star • CURLBRACKET_CLOSE CLASS
+    7 decl_star: decl_star • decl
+
+    IDENT              shift, and go to state 15
+    CURLBRACKET_CLOSE  shift, and go to state 16
+    BOOLEAN            shift, and go to state 17
+    INT                shift, and go to state 18
+    VOID               shift, and go to state 19
+
+    decl         go to state 20
+    constructor  go to state 21
+    method       go to state 22
+    type         go to state 23
+
+
+State 13
+
+    5 class: IDENT EXTENDS IDENT • CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS
+
+    CURLBRACKET_OPEN  shift, and go to state 24
+
+
+State 14
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC • STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    STATIC  shift, and go to state 25
+
+
+State 15
+
+   11 constructor: IDENT • BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+   20 type: IDENT •
+
+    BRACKET_OPEN  shift, and go to state 26
+
+    $default  reduce using rule 20 (type)
+
+
+State 16
+
+    4 class: IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE • CLASS
+
+    CLASS  shift, and go to state 27
+
+
+State 17
+
+   18 type: BOOLEAN •
+
+    $default  reduce using rule 18 (type)
+
+
+State 18
+
+   19 type: INT •
+
+    $default  reduce using rule 19 (type)
+
+
+State 19
+
+   13 method: VOID • IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    IDENT  shift, and go to state 28
+
+
+State 20
+
+    7 decl_star: decl_star decl •
+
+    $default  reduce using rule 7 (decl_star)
+
+
+State 21
+
+    9 decl: constructor •
+
+    $default  reduce using rule 9 (decl)
+
+
+State 22
+
+   10 decl: method •
+
+    $default  reduce using rule 10 (decl)
+
+
+State 23
+
+    8 decl: type • IDENT SEMI_COLON
+   12 method: type • IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    IDENT  shift, and go to state 29
+
+
+State 24
+
+    5 class: IDENT EXTENDS IDENT CURLBRACKET_OPEN • decl_star CURLBRACKET_CLOSE CLASS
+
+    $default  reduce using rule 6 (decl_star)
+
+    decl_star  go to state 30
+
+
+State 25
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC • VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    VOID  shift, and go to state 31
+
+
+State 26
+
+   11 constructor: IDENT BRACKET_OPEN • params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    IDENT    shift, and go to state 32
+    BOOLEAN  shift, and go to state 17
+    INT      shift, and go to state 18
+
+    $default  reduce using rule 14 (params_opt)
+
+    params_opt  go to state 33
+    params      go to state 34
+    type        go to state 35
+
+
+State 27
+
+    4 class: IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS •
+
+    $default  reduce using rule 4 (class)
+
+
+State 28
+
+   13 method: VOID IDENT • BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    BRACKET_OPEN  shift, and go to state 36
+
+
+State 29
+
+    8 decl: type IDENT • SEMI_COLON
+   12 method: type IDENT • BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    SEMI_COLON    shift, and go to state 37
+    BRACKET_OPEN  shift, and go to state 38
+
+
+State 30
+
+    5 class: IDENT EXTENDS IDENT CURLBRACKET_OPEN decl_star • CURLBRACKET_CLOSE CLASS
+    7 decl_star: decl_star • decl
+
+    IDENT              shift, and go to state 15
+    CURLBRACKET_CLOSE  shift, and go to state 39
+    BOOLEAN            shift, and go to state 17
+    INT                shift, and go to state 18
+    VOID               shift, and go to state 19
+
+    decl         go to state 20
+    constructor  go to state 21
+    method       go to state 22
+    type         go to state 23
+
+
+State 31
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID • MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    MAIN_C  shift, and go to state 40
+
+
+State 32
+
+   20 type: IDENT •
+
+    $default  reduce using rule 20 (type)
+
+
+State 33
+
+   11 constructor: IDENT BRACKET_OPEN params_opt • BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    BRACKET_CLOSE  shift, and go to state 41
+
+
+State 34
+
+   15 params_opt: params •
+   17 params: params • COMA type IDENT
+
+    COMA  shift, and go to state 42
+
+    $default  reduce using rule 15 (params_opt)
+
+
+State 35
+
+   16 params: type • IDENT
+
+    IDENT  shift, and go to state 43
+
+
+State 36
+
+   13 method: VOID IDENT BRACKET_OPEN • params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    IDENT    shift, and go to state 32
+    BOOLEAN  shift, and go to state 17
+    INT      shift, and go to state 18
+
+    $default  reduce using rule 14 (params_opt)
+
+    params_opt  go to state 44
+    params      go to state 34
+    type        go to state 35
+
+
+State 37
+
+    8 decl: type IDENT SEMI_COLON •
+
+    $default  reduce using rule 8 (decl)
+
+
+State 38
+
+   12 method: type IDENT BRACKET_OPEN • params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    IDENT    shift, and go to state 32
+    BOOLEAN  shift, and go to state 17
+    INT      shift, and go to state 18
+
+    $default  reduce using rule 14 (params_opt)
+
+    params_opt  go to state 45
+    params      go to state 34
+    type        go to state 35
+
+
+State 39
+
+    5 class: IDENT EXTENDS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE • CLASS
+
+    CLASS  shift, and go to state 46
+
+
+State 40
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C • BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    BRACKET_OPEN  shift, and go to state 47
+
+
+State 41
+
+   11 constructor: IDENT BRACKET_OPEN params_opt BRACKET_CLOSE • CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    CURLBRACKET_OPEN  shift, and go to state 48
+
+
+State 42
+
+   17 params: params COMA • type IDENT
+
+    IDENT    shift, and go to state 32
+    BOOLEAN  shift, and go to state 17
+    INT      shift, and go to state 18
+
+    type  go to state 49
+
+
+State 43
+
+   16 params: type IDENT •
+
+    $default  reduce using rule 16 (params)
+
+
+State 44
+
+   13 method: VOID IDENT BRACKET_OPEN params_opt • BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    BRACKET_CLOSE  shift, and go to state 50
+
+
+State 45
+
+   12 method: type IDENT BRACKET_OPEN params_opt • BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    BRACKET_CLOSE  shift, and go to state 51
+
+
+State 46
+
+    5 class: IDENT EXTENDS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS •
+
+    $default  reduce using rule 5 (class)
+
+
+State 47
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN • STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    STRING_C  shift, and go to state 52
+
+
+State 48
+
+   11 constructor: IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN • stmt_star CURLBRACKET_CLOSE
+
+    $default  reduce using rule 79 (stmt_star)
+
+    stmt_star  go to state 53
+
+
+State 49
+
+   17 params: params COMA type • IDENT
+
+    IDENT  shift, and go to state 54
+
+
+State 50
+
+   13 method: VOID IDENT BRACKET_OPEN params_opt BRACKET_CLOSE • CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    CURLBRACKET_OPEN  shift, and go to state 55
+
+
+State 51
+
+   12 method: type IDENT BRACKET_OPEN params_opt BRACKET_CLOSE • CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE
+
+    CURLBRACKET_OPEN  shift, and go to state 56
+
+
+State 52
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C • IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    IDENT  shift, and go to state 57
+
+
+State 53
+
+   11 constructor: IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star • CURLBRACKET_CLOSE
+   80 stmt_star: stmt_star • stmt
+
+    IDENT              shift, and go to state 58
+    STRING             shift, and go to state 59
+    INTEGER            shift, and go to state 60
+    CURLBRACKET_OPEN   shift, and go to state 61
+    CURLBRACKET_CLOSE  shift, and go to state 62
+    SEMI_COLON         shift, and go to state 63
+    BRACKET_OPEN       shift, and go to state 64
+    BOOLEAN            shift, and go to state 17
+    INT                shift, and go to state 18
+    RETURN             shift, and go to state 65
+    NEW                shift, and go to state 66
+    THIS               shift, and go to state 67
+    NULL_TOKEN         shift, and go to state 68
+    TRUE               shift, and go to state 69
+    FALSE              shift, and go to state 70
+    NOT                shift, and go to state 71
+    MINUS              shift, and go to state 72
+    FOR                shift, and go to state 73
+    IF                 shift, and go to state 74
+
+    type             go to state 75
+    expr             go to state 76
+    expr_sans_binop  go to state 77
+    stmt             go to state 78
+
+
+State 54
+
+   17 params: params COMA type IDENT •
+
+    $default  reduce using rule 17 (params)
+
+
+State 55
+
+   13 method: VOID IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN • stmt_star CURLBRACKET_CLOSE
+
+    $default  reduce using rule 79 (stmt_star)
+
+    stmt_star  go to state 79
+
+
+State 56
+
+   12 method: type IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN • stmt_star CURLBRACKET_CLOSE
+
+    $default  reduce using rule 79 (stmt_star)
+
+    stmt_star  go to state 80
+
+
+State 57
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT • SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    SQUBRACKET_OPEN  shift, and go to state 81
+
+
+State 58
+
+   20 type: IDENT •
+   29 expr: IDENT •
+   30     | IDENT • postfix_expr
+   43 expr_sans_binop: IDENT • postfix_expr_sans_binop
+
+    POINT         shift, and go to state 82
+    BRACKET_OPEN  shift, and go to state 83
+    SET           shift, and go to state 84
+    INSTANCE_OF   shift, and go to state 85
+
+    IDENT          reduce using rule 20 (type)
+    SEMI_COLON     reduce using rule 29 (expr)
+    SEMI_COLON     [reduce using rule 48 (postfix_expr)]
+    BRACKET_CLOSE  reduce using rule 20 (type)
+    BRACKET_CLOSE  [reduce using rule 29 (expr)]
+    BRACKET_CLOSE  [reduce using rule 48 (postfix_expr)]
+    $default       reduce using rule 55 (postfix_expr_sans_binop)
+
+    postfix_expr             go to state 86
+    postfix_expr_sans_binop  go to state 87
+
+
+State 59
+
+   23 expr: STRING •
+   37 expr_sans_binop: STRING •
+
+    SEMI_COLON     reduce using rule 23 (expr)
+    COMA           reduce using rule 23 (expr)
+    BRACKET_CLOSE  reduce using rule 23 (expr)
+    $default       reduce using rule 37 (expr_sans_binop)
+
+
+State 60
+
+   22 expr: INTEGER •
+   36 expr_sans_binop: INTEGER •
+
+    SEMI_COLON     reduce using rule 22 (expr)
+    COMA           reduce using rule 22 (expr)
+    BRACKET_CLOSE  reduce using rule 22 (expr)
+    $default       reduce using rule 36 (expr_sans_binop)
+
+
+State 61
+
+   88 stmt: CURLBRACKET_OPEN • stmt_star CURLBRACKET_CLOSE
+
+    $default  reduce using rule 79 (stmt_star)
+
+    stmt_star  go to state 88
+
+
+State 62
+
+   11 constructor: IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE •
+
+    $default  reduce using rule 11 (constructor)
+
+
+State 63
+
+   81 stmt: SEMI_COLON •
+
+    $default  reduce using rule 81 (stmt)
+
+
+State 64
+
+   28 expr: BRACKET_OPEN • expr BRACKET_CLOSE
+   34     | BRACKET_OPEN • type BRACKET_CLOSE expr
+   42 expr_sans_binop: BRACKET_OPEN • expr BRACKET_CLOSE
+   47                | BRACKET_OPEN • type BRACKET_CLOSE expr_sans_binop
+
+    IDENT         shift, and go to state 58
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    BOOLEAN       shift, and go to state 17
+    INT           shift, and go to state 18
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    type             go to state 89
+    expr             go to state 90
+    expr_sans_binop  go to state 77
+
+
+State 65
+
+   89 stmt: RETURN • SEMI_COLON
+   90     | RETURN • expr SEMI_COLON
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    SEMI_COLON    shift, and go to state 92
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 93
+    expr_sans_binop  go to state 77
+
+
+State 66
+
+   31 expr: NEW • IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   44 expr_sans_binop: NEW • IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+
+    IDENT  shift, and go to state 94
+
+
+State 67
+
+   26 expr: THIS •
+   40 expr_sans_binop: THIS •
+
+    SEMI_COLON     reduce using rule 26 (expr)
+    COMA           reduce using rule 26 (expr)
+    BRACKET_CLOSE  reduce using rule 26 (expr)
+    $default       reduce using rule 40 (expr_sans_binop)
+
+
+State 68
+
+   27 expr: NULL_TOKEN •
+   41 expr_sans_binop: NULL_TOKEN •
+
+    SEMI_COLON     reduce using rule 27 (expr)
+    COMA           reduce using rule 27 (expr)
+    BRACKET_CLOSE  reduce using rule 27 (expr)
+    $default       reduce using rule 41 (expr_sans_binop)
+
+
+State 69
+
+   24 expr: TRUE •
+   38 expr_sans_binop: TRUE •
+
+    SEMI_COLON     reduce using rule 24 (expr)
+    COMA           reduce using rule 24 (expr)
+    BRACKET_CLOSE  reduce using rule 24 (expr)
+    $default       reduce using rule 38 (expr_sans_binop)
+
+
+State 70
+
+   25 expr: FALSE •
+   39 expr_sans_binop: FALSE •
+
+    SEMI_COLON     reduce using rule 25 (expr)
+    COMA           reduce using rule 25 (expr)
+    BRACKET_CLOSE  reduce using rule 25 (expr)
+    $default       reduce using rule 39 (expr_sans_binop)
+
+
+State 71
+
+   32 expr: NOT • expr
+   45 expr_sans_binop: NOT • expr_sans_binop
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 95
+    expr_sans_binop  go to state 96
+
+
+State 72
+
+   33 expr: MINUS • expr
+   46 expr_sans_binop: MINUS • expr_sans_binop
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 97
+    expr_sans_binop  go to state 98
+
+
+State 73
+
+   87 stmt: FOR • BRACKET_OPEN expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt BRACKET_CLOSE stmt
+
+    BRACKET_OPEN  shift, and go to state 99
+
+
+State 74
+
+   85 stmt: IF • BRACKET_OPEN expr BRACKET_CLOSE stmt
+   86     | IF • BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE stmt
+
+    BRACKET_OPEN  shift, and go to state 100
+
+
+State 75
+
+   83 stmt: type • IDENT SEMI_COLON
+   84     | type • IDENT SET expr SEMI_COLON
+
+    IDENT  shift, and go to state 101
+
+
+State 76
+
+   82 stmt: expr • SEMI_COLON
+
+    SEMI_COLON  shift, and go to state 102
+
+
+State 77
+
+   35 expr: expr_sans_binop • binop expr
+
+    EQUALS            shift, and go to state 103
+    OR                shift, and go to state 104
+    AND               shift, and go to state 105
+    DIFFERENT         shift, and go to state 106
+    SMALLER           shift, and go to state 107
+    SMALLER_OR_EQUAL  shift, and go to state 108
+    BIGGER            shift, and go to state 109
+    BIGGER_OR_EQUAL   shift, and go to state 110
+    PLUS              shift, and go to state 111
+    MINUS             shift, and go to state 112
+    TIMES             shift, and go to state 113
+    DIVIDE            shift, and go to state 114
+    REMAIN            shift, and go to state 115
+
+    binop  go to state 116
+
+
+State 78
+
+   80 stmt_star: stmt_star stmt •
+
+    $default  reduce using rule 80 (stmt_star)
+
+
+State 79
+
+   13 method: VOID IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star • CURLBRACKET_CLOSE
+   80 stmt_star: stmt_star • stmt
+
+    IDENT              shift, and go to state 58
+    STRING             shift, and go to state 59
+    INTEGER            shift, and go to state 60
+    CURLBRACKET_OPEN   shift, and go to state 61
+    CURLBRACKET_CLOSE  shift, and go to state 117
+    SEMI_COLON         shift, and go to state 63
+    BRACKET_OPEN       shift, and go to state 64
+    BOOLEAN            shift, and go to state 17
+    INT                shift, and go to state 18
+    RETURN             shift, and go to state 65
+    NEW                shift, and go to state 66
+    THIS               shift, and go to state 67
+    NULL_TOKEN         shift, and go to state 68
+    TRUE               shift, and go to state 69
+    FALSE              shift, and go to state 70
+    NOT                shift, and go to state 71
+    MINUS              shift, and go to state 72
+    FOR                shift, and go to state 73
+    IF                 shift, and go to state 74
+
+    type             go to state 75
+    expr             go to state 76
+    expr_sans_binop  go to state 77
+    stmt             go to state 78
+
+
+State 80
+
+   12 method: type IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star • CURLBRACKET_CLOSE
+   80 stmt_star: stmt_star • stmt
+
+    IDENT              shift, and go to state 58
+    STRING             shift, and go to state 59
+    INTEGER            shift, and go to state 60
+    CURLBRACKET_OPEN   shift, and go to state 61
+    CURLBRACKET_CLOSE  shift, and go to state 118
+    SEMI_COLON         shift, and go to state 63
+    BRACKET_OPEN       shift, and go to state 64
+    BOOLEAN            shift, and go to state 17
+    INT                shift, and go to state 18
+    RETURN             shift, and go to state 65
+    NEW                shift, and go to state 66
+    THIS               shift, and go to state 67
+    NULL_TOKEN         shift, and go to state 68
+    TRUE               shift, and go to state 69
+    FALSE              shift, and go to state 70
+    NOT                shift, and go to state 71
+    MINUS              shift, and go to state 72
+    FOR                shift, and go to state 73
+    IF                 shift, and go to state 74
+
+    type             go to state 75
+    expr             go to state 76
+    expr_sans_binop  go to state 77
+    stmt             go to state 78
+
+
+State 81
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN • SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    SQUBRACKET_CLOSE  shift, and go to state 119
+
+
+State 82
+
+   51 postfix_expr: POINT • IDENT
+   52             | POINT • IDENT SET expr
+   53             | POINT • IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   58 postfix_expr_sans_binop: POINT • IDENT
+   59                        | POINT • IDENT SET expr_sans_binop
+   60                        | POINT • IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+
+    IDENT  shift, and go to state 120
+
+
+State 83
+
+   50 postfix_expr: BRACKET_OPEN • lexpr_opt BRACKET_CLOSE
+   57 postfix_expr_sans_binop: BRACKET_OPEN • lexpr_opt BRACKET_CLOSE
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    $default  reduce using rule 75 (lexpr_opt)
+
+    expr             go to state 121
+    expr_sans_binop  go to state 77
+    lexpr_opt        go to state 122
+    lexpr            go to state 123
+
+
+State 84
+
+   49 postfix_expr: SET • expr
+   56 postfix_expr_sans_binop: SET • expr_sans_binop
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 124
+    expr_sans_binop  go to state 125
+
+
+State 85
+
+   54 postfix_expr: INSTANCE_OF • type
+   61 postfix_expr_sans_binop: INSTANCE_OF • type
+
+    IDENT    shift, and go to state 32
+    BOOLEAN  shift, and go to state 17
+    INT      shift, and go to state 18
+
+    type  go to state 126
+
+
+State 86
+
+   30 expr: IDENT postfix_expr •
+
+    $default  reduce using rule 30 (expr)
+
+
+State 87
+
+   43 expr_sans_binop: IDENT postfix_expr_sans_binop •
+
+    $default  reduce using rule 43 (expr_sans_binop)
+
+
+State 88
+
+   80 stmt_star: stmt_star • stmt
+   88 stmt: CURLBRACKET_OPEN stmt_star • CURLBRACKET_CLOSE
+
+    IDENT              shift, and go to state 58
+    STRING             shift, and go to state 59
+    INTEGER            shift, and go to state 60
+    CURLBRACKET_OPEN   shift, and go to state 61
+    CURLBRACKET_CLOSE  shift, and go to state 127
+    SEMI_COLON         shift, and go to state 63
+    BRACKET_OPEN       shift, and go to state 64
+    BOOLEAN            shift, and go to state 17
+    INT                shift, and go to state 18
+    RETURN             shift, and go to state 65
+    NEW                shift, and go to state 66
+    THIS               shift, and go to state 67
+    NULL_TOKEN         shift, and go to state 68
+    TRUE               shift, and go to state 69
+    FALSE              shift, and go to state 70
+    NOT                shift, and go to state 71
+    MINUS              shift, and go to state 72
+    FOR                shift, and go to state 73
+    IF                 shift, and go to state 74
+
+    type             go to state 75
+    expr             go to state 76
+    expr_sans_binop  go to state 77
+    stmt             go to state 78
+
+
+State 89
+
+   34 expr: BRACKET_OPEN type • BRACKET_CLOSE expr
+   47 expr_sans_binop: BRACKET_OPEN type • BRACKET_CLOSE expr_sans_binop
+
+    BRACKET_CLOSE  shift, and go to state 128
+
+
+State 90
+
+   28 expr: BRACKET_OPEN expr • BRACKET_CLOSE
+   42 expr_sans_binop: BRACKET_OPEN expr • BRACKET_CLOSE
+
+    BRACKET_CLOSE  shift, and go to state 129
+
+
+State 91
+
+   29 expr: IDENT •
+   30     | IDENT • postfix_expr
+   43 expr_sans_binop: IDENT • postfix_expr_sans_binop
+
+    POINT         shift, and go to state 82
+    BRACKET_OPEN  shift, and go to state 83
+    SET           shift, and go to state 84
+    INSTANCE_OF   shift, and go to state 85
+
+    SEMI_COLON     reduce using rule 29 (expr)
+    SEMI_COLON     [reduce using rule 48 (postfix_expr)]
+    COMA           reduce using rule 29 (expr)
+    COMA           [reduce using rule 48 (postfix_expr)]
+    BRACKET_CLOSE  reduce using rule 29 (expr)
+    BRACKET_CLOSE  [reduce using rule 48 (postfix_expr)]
+    $default       reduce using rule 55 (postfix_expr_sans_binop)
+
+    postfix_expr             go to state 86
+    postfix_expr_sans_binop  go to state 87
+
+
+State 92
+
+   89 stmt: RETURN SEMI_COLON •
+
+    $default  reduce using rule 89 (stmt)
+
+
+State 93
+
+   90 stmt: RETURN expr • SEMI_COLON
+
+    SEMI_COLON  shift, and go to state 130
+
+
+State 94
+
+   31 expr: NEW IDENT • BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   44 expr_sans_binop: NEW IDENT • BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+
+    BRACKET_OPEN  shift, and go to state 131
+
+
+State 95
+
+   32 expr: NOT expr •
+
+    $default  reduce using rule 32 (expr)
+
+
+State 96
+
+   35 expr: expr_sans_binop • binop expr
+   45 expr_sans_binop: NOT expr_sans_binop •
+
+    $default  reduce using rule 45 (expr_sans_binop)
+
+    binop  go to state 116
+
+
+State 97
+
+   33 expr: MINUS expr •
+
+    $default  reduce using rule 33 (expr)
+
+
+State 98
+
+   35 expr: expr_sans_binop • binop expr
+   46 expr_sans_binop: MINUS expr_sans_binop •
+
+    $default  reduce using rule 46 (expr_sans_binop)
+
+    binop  go to state 116
+
+
+State 99
+
+   87 stmt: FOR BRACKET_OPEN • expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt BRACKET_CLOSE stmt
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    $default  reduce using rule 91 (expr_opt)
+
+    expr             go to state 132
+    expr_sans_binop  go to state 77
+    expr_opt         go to state 133
+
+
+State 100
+
+   85 stmt: IF BRACKET_OPEN • expr BRACKET_CLOSE stmt
+   86     | IF BRACKET_OPEN • expr BRACKET_CLOSE stmt ELSE stmt
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 134
+    expr_sans_binop  go to state 77
+
+
+State 101
+
+   83 stmt: type IDENT • SEMI_COLON
+   84     | type IDENT • SET expr SEMI_COLON
+
+    SEMI_COLON  shift, and go to state 135
+    SET         shift, and go to state 136
+
+
+State 102
+
+   82 stmt: expr SEMI_COLON •
+
+    $default  reduce using rule 82 (stmt)
+
+
+State 103
+
+   62 binop: EQUALS •
+
+    $default  reduce using rule 62 (binop)
+
+
+State 104
+
+   74 binop: OR •
+
+    $default  reduce using rule 74 (binop)
+
+
+State 105
+
+   73 binop: AND •
+
+    $default  reduce using rule 73 (binop)
+
+
+State 106
+
+   63 binop: DIFFERENT •
+
+    $default  reduce using rule 63 (binop)
+
+
+State 107
+
+   64 binop: SMALLER •
+
+    $default  reduce using rule 64 (binop)
+
+
+State 108
+
+   65 binop: SMALLER_OR_EQUAL •
+
+    $default  reduce using rule 65 (binop)
+
+
+State 109
+
+   66 binop: BIGGER •
+
+    $default  reduce using rule 66 (binop)
+
+
+State 110
+
+   67 binop: BIGGER_OR_EQUAL •
+
+    $default  reduce using rule 67 (binop)
+
+
+State 111
+
+   68 binop: PLUS •
+
+    $default  reduce using rule 68 (binop)
+
+
+State 112
+
+   69 binop: MINUS •
+
+    $default  reduce using rule 69 (binop)
+
+
+State 113
+
+   70 binop: TIMES •
+
+    $default  reduce using rule 70 (binop)
+
+
+State 114
+
+   71 binop: DIVIDE •
+
+    $default  reduce using rule 71 (binop)
+
+
+State 115
+
+   72 binop: REMAIN •
+
+    $default  reduce using rule 72 (binop)
+
+
+State 116
+
+   35 expr: expr_sans_binop binop • expr
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 137
+    expr_sans_binop  go to state 77
+
+
+State 117
+
+   13 method: VOID IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE •
+
+    $default  reduce using rule 13 (method)
+
+
+State 118
+
+   12 method: type IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE •
+
+    $default  reduce using rule 12 (method)
+
+
+State 119
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE • BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    BRACKET_CLOSE  shift, and go to state 138
+
+
+State 120
+
+   51 postfix_expr: POINT IDENT •
+   52             | POINT IDENT • SET expr
+   53             | POINT IDENT • BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+   58 postfix_expr_sans_binop: POINT IDENT •
+   59                        | POINT IDENT • SET expr_sans_binop
+   60                        | POINT IDENT • BRACKET_OPEN lexpr_opt BRACKET_CLOSE
+
+    BRACKET_OPEN  shift, and go to state 139
+    SET           shift, and go to state 140
+
+    SEMI_COLON     reduce using rule 51 (postfix_expr)
+    COMA           reduce using rule 51 (postfix_expr)
+    BRACKET_CLOSE  reduce using rule 51 (postfix_expr)
+    $default       reduce using rule 58 (postfix_expr_sans_binop)
+
+
+State 121
+
+   77 lexpr: expr •
+
+    $default  reduce using rule 77 (lexpr)
+
+
+State 122
+
+   50 postfix_expr: BRACKET_OPEN lexpr_opt • BRACKET_CLOSE
+   57 postfix_expr_sans_binop: BRACKET_OPEN lexpr_opt • BRACKET_CLOSE
+
+    BRACKET_CLOSE  shift, and go to state 141
+
+
+State 123
+
+   76 lexpr_opt: lexpr •
+   78 lexpr: lexpr • COMA expr
+
+    COMA  shift, and go to state 142
+
+    $default  reduce using rule 76 (lexpr_opt)
+
+
+State 124
+
+   49 postfix_expr: SET expr •
+
+    $default  reduce using rule 49 (postfix_expr)
+
+
+State 125
+
+   35 expr: expr_sans_binop • binop expr
+   56 postfix_expr_sans_binop: SET expr_sans_binop •
+
+    EQUALS            shift, and go to state 103
+    OR                shift, and go to state 104
+    AND               shift, and go to state 105
+    DIFFERENT         shift, and go to state 106
+    SMALLER           shift, and go to state 107
+    SMALLER_OR_EQUAL  shift, and go to state 108
+    BIGGER            shift, and go to state 109
+    BIGGER_OR_EQUAL   shift, and go to state 110
+    PLUS              shift, and go to state 111
+    MINUS             shift, and go to state 112
+    TIMES             shift, and go to state 113
+    DIVIDE            shift, and go to state 114
+    REMAIN            shift, and go to state 115
+
+    binop  go to state 116
+
+
+State 126
+
+   54 postfix_expr: INSTANCE_OF type •
+   61 postfix_expr_sans_binop: INSTANCE_OF type •
+
+    SEMI_COLON     reduce using rule 54 (postfix_expr)
+    COMA           reduce using rule 54 (postfix_expr)
+    BRACKET_CLOSE  reduce using rule 54 (postfix_expr)
+    $default       reduce using rule 61 (postfix_expr_sans_binop)
+
+
+State 127
+
+   88 stmt: CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE •
+
+    $default  reduce using rule 88 (stmt)
+
+
+State 128
+
+   34 expr: BRACKET_OPEN type BRACKET_CLOSE • expr
+   47 expr_sans_binop: BRACKET_OPEN type BRACKET_CLOSE • expr_sans_binop
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 143
+    expr_sans_binop  go to state 144
+
+
+State 129
+
+   28 expr: BRACKET_OPEN expr BRACKET_CLOSE •
+   42 expr_sans_binop: BRACKET_OPEN expr BRACKET_CLOSE •
+
+    SEMI_COLON     reduce using rule 28 (expr)
+    COMA           reduce using rule 28 (expr)
+    BRACKET_CLOSE  reduce using rule 28 (expr)
+    $default       reduce using rule 42 (expr_sans_binop)
+
+
+State 130
+
+   90 stmt: RETURN expr SEMI_COLON •
+
+    $default  reduce using rule 90 (stmt)
+
+
+State 131
+
+   31 expr: NEW IDENT BRACKET_OPEN • lexpr_opt BRACKET_CLOSE
+   44 expr_sans_binop: NEW IDENT BRACKET_OPEN • lexpr_opt BRACKET_CLOSE
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    $default  reduce using rule 75 (lexpr_opt)
+
+    expr             go to state 121
+    expr_sans_binop  go to state 77
+    lexpr_opt        go to state 145
+    lexpr            go to state 123
+
+
+State 132
+
+   92 expr_opt: expr •
+
+    $default  reduce using rule 92 (expr_opt)
+
+
+State 133
+
+   87 stmt: FOR BRACKET_OPEN expr_opt • SEMI_COLON expr_opt SEMI_COLON expr_opt BRACKET_CLOSE stmt
+
+    SEMI_COLON  shift, and go to state 146
+
+
+State 134
+
+   85 stmt: IF BRACKET_OPEN expr • BRACKET_CLOSE stmt
+   86     | IF BRACKET_OPEN expr • BRACKET_CLOSE stmt ELSE stmt
+
+    BRACKET_CLOSE  shift, and go to state 147
+
+
+State 135
+
+   83 stmt: type IDENT SEMI_COLON •
+
+    $default  reduce using rule 83 (stmt)
+
+
+State 136
+
+   84 stmt: type IDENT SET • expr SEMI_COLON
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 148
+    expr_sans_binop  go to state 77
+
+
+State 137
+
+   35 expr: expr_sans_binop binop expr •
+
+    $default  reduce using rule 35 (expr)
+
+
+State 138
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE • CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    CURLBRACKET_OPEN  shift, and go to state 149
+
+
+State 139
+
+   53 postfix_expr: POINT IDENT BRACKET_OPEN • lexpr_opt BRACKET_CLOSE
+   60 postfix_expr_sans_binop: POINT IDENT BRACKET_OPEN • lexpr_opt BRACKET_CLOSE
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    $default  reduce using rule 75 (lexpr_opt)
+
+    expr             go to state 121
+    expr_sans_binop  go to state 77
+    lexpr_opt        go to state 150
+    lexpr            go to state 123
+
+
+State 140
+
+   52 postfix_expr: POINT IDENT SET • expr
+   59 postfix_expr_sans_binop: POINT IDENT SET • expr_sans_binop
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 151
+    expr_sans_binop  go to state 152
+
+
+State 141
+
+   50 postfix_expr: BRACKET_OPEN lexpr_opt BRACKET_CLOSE •
+   57 postfix_expr_sans_binop: BRACKET_OPEN lexpr_opt BRACKET_CLOSE •
+
+    SEMI_COLON     reduce using rule 50 (postfix_expr)
+    COMA           reduce using rule 50 (postfix_expr)
+    BRACKET_CLOSE  reduce using rule 50 (postfix_expr)
+    $default       reduce using rule 57 (postfix_expr_sans_binop)
+
+
+State 142
+
+   78 lexpr: lexpr COMA • expr
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    expr             go to state 153
+    expr_sans_binop  go to state 77
+
+
+State 143
+
+   34 expr: BRACKET_OPEN type BRACKET_CLOSE expr •
+
+    $default  reduce using rule 34 (expr)
+
+
+State 144
+
+   35 expr: expr_sans_binop • binop expr
+   47 expr_sans_binop: BRACKET_OPEN type BRACKET_CLOSE expr_sans_binop •
+
+    $default  reduce using rule 47 (expr_sans_binop)
+
+    binop  go to state 116
+
+
+State 145
+
+   31 expr: NEW IDENT BRACKET_OPEN lexpr_opt • BRACKET_CLOSE
+   44 expr_sans_binop: NEW IDENT BRACKET_OPEN lexpr_opt • BRACKET_CLOSE
+
+    BRACKET_CLOSE  shift, and go to state 154
+
+
+State 146
+
+   87 stmt: FOR BRACKET_OPEN expr_opt SEMI_COLON • expr_opt SEMI_COLON expr_opt BRACKET_CLOSE stmt
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    $default  reduce using rule 91 (expr_opt)
+
+    expr             go to state 132
+    expr_sans_binop  go to state 77
+    expr_opt         go to state 155
+
+
+State 147
+
+   85 stmt: IF BRACKET_OPEN expr BRACKET_CLOSE • stmt
+   86     | IF BRACKET_OPEN expr BRACKET_CLOSE • stmt ELSE stmt
+
+    IDENT             shift, and go to state 58
+    STRING            shift, and go to state 59
+    INTEGER           shift, and go to state 60
+    CURLBRACKET_OPEN  shift, and go to state 61
+    SEMI_COLON        shift, and go to state 63
+    BRACKET_OPEN      shift, and go to state 64
+    BOOLEAN           shift, and go to state 17
+    INT               shift, and go to state 18
+    RETURN            shift, and go to state 65
+    NEW               shift, and go to state 66
+    THIS              shift, and go to state 67
+    NULL_TOKEN        shift, and go to state 68
+    TRUE              shift, and go to state 69
+    FALSE             shift, and go to state 70
+    NOT               shift, and go to state 71
+    MINUS             shift, and go to state 72
+    FOR               shift, and go to state 73
+    IF                shift, and go to state 74
+
+    type             go to state 75
+    expr             go to state 76
+    expr_sans_binop  go to state 77
+    stmt             go to state 156
+
+
+State 148
+
+   84 stmt: type IDENT SET expr • SEMI_COLON
+
+    SEMI_COLON  shift, and go to state 157
+
+
+State 149
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN • stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+
+    $default  reduce using rule 79 (stmt_star)
+
+    stmt_star  go to state 158
+
+
+State 150
+
+   53 postfix_expr: POINT IDENT BRACKET_OPEN lexpr_opt • BRACKET_CLOSE
+   60 postfix_expr_sans_binop: POINT IDENT BRACKET_OPEN lexpr_opt • BRACKET_CLOSE
+
+    BRACKET_CLOSE  shift, and go to state 159
+
+
+State 151
+
+   52 postfix_expr: POINT IDENT SET expr •
+
+    $default  reduce using rule 52 (postfix_expr)
+
+
+State 152
+
+   35 expr: expr_sans_binop • binop expr
+   59 postfix_expr_sans_binop: POINT IDENT SET expr_sans_binop •
+
+    EQUALS            shift, and go to state 103
+    OR                shift, and go to state 104
+    AND               shift, and go to state 105
+    DIFFERENT         shift, and go to state 106
+    SMALLER           shift, and go to state 107
+    SMALLER_OR_EQUAL  shift, and go to state 108
+    BIGGER            shift, and go to state 109
+    BIGGER_OR_EQUAL   shift, and go to state 110
+    PLUS              shift, and go to state 111
+    MINUS             shift, and go to state 112
+    TIMES             shift, and go to state 113
+    DIVIDE            shift, and go to state 114
+    REMAIN            shift, and go to state 115
+
+    binop  go to state 116
+
+
+State 153
+
+   78 lexpr: lexpr COMA expr •
+
+    $default  reduce using rule 78 (lexpr)
+
+
+State 154
+
+   31 expr: NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE •
+   44 expr_sans_binop: NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE •
+
+    SEMI_COLON     reduce using rule 31 (expr)
+    COMA           reduce using rule 31 (expr)
+    BRACKET_CLOSE  reduce using rule 31 (expr)
+    $default       reduce using rule 44 (expr_sans_binop)
+
+
+State 155
+
+   87 stmt: FOR BRACKET_OPEN expr_opt SEMI_COLON expr_opt • SEMI_COLON expr_opt BRACKET_CLOSE stmt
+
+    SEMI_COLON  shift, and go to state 160
+
+
+State 156
+
+   85 stmt: IF BRACKET_OPEN expr BRACKET_CLOSE stmt •
+   86     | IF BRACKET_OPEN expr BRACKET_CLOSE stmt • ELSE stmt
+
+    ELSE  shift, and go to state 161
+
+    $default  reduce using rule 85 (stmt)
+
+
+State 157
+
+   84 stmt: type IDENT SET expr SEMI_COLON •
+
+    $default  reduce using rule 84 (stmt)
+
+
+State 158
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star • CURLBRACKET_CLOSE CURLBRACKET_CLOSE
+   80 stmt_star: stmt_star • stmt
+
+    IDENT              shift, and go to state 58
+    STRING             shift, and go to state 59
+    INTEGER            shift, and go to state 60
+    CURLBRACKET_OPEN   shift, and go to state 61
+    CURLBRACKET_CLOSE  shift, and go to state 162
+    SEMI_COLON         shift, and go to state 63
+    BRACKET_OPEN       shift, and go to state 64
+    BOOLEAN            shift, and go to state 17
+    INT                shift, and go to state 18
+    RETURN             shift, and go to state 65
+    NEW                shift, and go to state 66
+    THIS               shift, and go to state 67
+    NULL_TOKEN         shift, and go to state 68
+    TRUE               shift, and go to state 69
+    FALSE              shift, and go to state 70
+    NOT                shift, and go to state 71
+    MINUS              shift, and go to state 72
+    FOR                shift, and go to state 73
+    IF                 shift, and go to state 74
+
+    type             go to state 75
+    expr             go to state 76
+    expr_sans_binop  go to state 77
+    stmt             go to state 78
+
+
+State 159
+
+   53 postfix_expr: POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE •
+   60 postfix_expr_sans_binop: POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE •
+
+    SEMI_COLON     reduce using rule 53 (postfix_expr)
+    COMA           reduce using rule 53 (postfix_expr)
+    BRACKET_CLOSE  reduce using rule 53 (postfix_expr)
+    $default       reduce using rule 60 (postfix_expr_sans_binop)
+
+
+State 160
+
+   87 stmt: FOR BRACKET_OPEN expr_opt SEMI_COLON expr_opt SEMI_COLON • expr_opt BRACKET_CLOSE stmt
+
+    IDENT         shift, and go to state 91
+    STRING        shift, and go to state 59
+    INTEGER       shift, and go to state 60
+    BRACKET_OPEN  shift, and go to state 64
+    NEW           shift, and go to state 66
+    THIS          shift, and go to state 67
+    NULL_TOKEN    shift, and go to state 68
+    TRUE          shift, and go to state 69
+    FALSE         shift, and go to state 70
+    NOT           shift, and go to state 71
+    MINUS         shift, and go to state 72
+
+    $default  reduce using rule 91 (expr_opt)
+
+    expr             go to state 132
+    expr_sans_binop  go to state 77
+    expr_opt         go to state 163
+
+
+State 161
+
+   86 stmt: IF BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE • stmt
+
+    IDENT             shift, and go to state 58
+    STRING            shift, and go to state 59
+    INTEGER           shift, and go to state 60
+    CURLBRACKET_OPEN  shift, and go to state 61
+    SEMI_COLON        shift, and go to state 63
+    BRACKET_OPEN      shift, and go to state 64
+    BOOLEAN           shift, and go to state 17
+    INT               shift, and go to state 18
+    RETURN            shift, and go to state 65
+    NEW               shift, and go to state 66
+    THIS              shift, and go to state 67
+    NULL_TOKEN        shift, and go to state 68
+    TRUE              shift, and go to state 69
+    FALSE             shift, and go to state 70
+    NOT               shift, and go to state 71
+    MINUS             shift, and go to state 72
+    FOR               shift, and go to state 73
+    IF                shift, and go to state 74
+
+    type             go to state 75
+    expr             go to state 76
+    expr_sans_binop  go to state 77
+    stmt             go to state 164
+
+
+State 162
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE • CURLBRACKET_CLOSE
+
+    CURLBRACKET_CLOSE  shift, and go to state 165
+
+
+State 163
+
+   87 stmt: FOR BRACKET_OPEN expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt • BRACKET_CLOSE stmt
+
+    BRACKET_CLOSE  shift, and go to state 166
+
+
+State 164
+
+   86 stmt: IF BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE stmt •
+
+    $default  reduce using rule 86 (stmt)
+
+
+State 165
+
+   21 class_Main: MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE •
+
+    $default  reduce using rule 21 (class_Main)
+
+
+State 166
+
+   87 stmt: FOR BRACKET_OPEN expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt BRACKET_CLOSE • stmt
+
+    IDENT             shift, and go to state 58
+    STRING            shift, and go to state 59
+    INTEGER           shift, and go to state 60
+    CURLBRACKET_OPEN  shift, and go to state 61
+    SEMI_COLON        shift, and go to state 63
+    BRACKET_OPEN      shift, and go to state 64
+    BOOLEAN           shift, and go to state 17
+    INT               shift, and go to state 18
+    RETURN            shift, and go to state 65
+    NEW               shift, and go to state 66
+    THIS              shift, and go to state 67
+    NULL_TOKEN        shift, and go to state 68
+    TRUE              shift, and go to state 69
+    FALSE             shift, and go to state 70
+    NOT               shift, and go to state 71
+    MINUS             shift, and go to state 72
+    FOR               shift, and go to state 73
+    IF                shift, and go to state 74
+
+    type             go to state 75
+    expr             go to state 76
+    expr_sans_binop  go to state 77
+    stmt             go to state 167
+
+
+State 167
+
+   87 stmt: FOR BRACKET_OPEN expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt BRACKET_CLOSE stmt •
+
+    $default  reduce using rule 87 (stmt)

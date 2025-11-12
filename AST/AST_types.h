@@ -38,3 +38,4 @@ enum NodeType {
     NODE_BINOP,
     NODE_NEW
 };
+
