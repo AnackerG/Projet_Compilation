@@ -65,7 +65,12 @@ void print_node_type(NodeType type) {
 void print_node(ASTNode* node, int indent) {
     std::cout << std::string(indent, ' ');
     print_node_type(node->type);
-    std::cout << "<" + node->name;
+    std::cout << "<";
+    if(node->type == NODE_INTEGER) {
+        std::cout << node->int_val;
+    } else if(!node->name.empty()) {
+        std::cout << node->name;
+    }
     std::cout << ">\n";
     int n = node->children.size();
     for(int i = 0; i < n; i++) {
