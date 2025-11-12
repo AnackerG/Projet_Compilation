@@ -6,12 +6,14 @@ Lexer* gLexer;
 // pour l'instant c'est le même que celui du parseur, on modifiera après
 
 extern "C" int yyparse();
+extern ASTNode *root;
 
 int main(int argc, char** argv) {
 
 
     gLexer = new Lexer(argv[1]);
     int res = yyparse();
+    print_node(root);
     delete gLexer;
     return res;
 }

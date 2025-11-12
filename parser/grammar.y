@@ -174,6 +174,7 @@ type:
         $$ = make_node_simple(NODE_TYPE, $1);
         free($1);
     }
+  | STRING_C { $$ = make_node_simple(NODE_TYPE, "string"); }
   ;
 
 class_Main:
@@ -198,6 +199,7 @@ expr:
   | THIS { $$ = make_node_simple(NODE_THIS, NULL); }
   | NULL_TOKEN { $$ = make_node_simple(NODE_NULL, NULL); }
   | BRACKET_OPEN expr BRACKET_CLOSE { $$ = $2; }
+  | IDENT { $$ = make_node_simple(NODE_EXPR, $1); free($1); }
   | IDENT postfix_expr {
         if (get_node_type($2) == NODE_STMT && !node_has_children($2)) {
             $$ = make_node_simple(NODE_EXPR, $1);
@@ -213,6 +215,10 @@ expr:
         $$ = make_node_simple(NODE_NEW, $2);
         add_child($$, $4);
         free($2);
+    }
+  | NEW STRING_C BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+        $$ = make_node_simple(NODE_NEW, "String");
+        add_child($$, $4);
     }
   | NOT expr {
         $$ = make_node_simple(NODE_NOT, NULL);
@@ -257,10 +263,23 @@ expr_sans_binop:
             free($1);
         }
     }
+  | THIS postfix_expr_sans_binop {
+        if (get_node_type($2) == NODE_STMT && !node_has_children($2)) {
+            $$ = make_node_simple(NODE_EXPR, "this");
+            free_node($2);
+        } else {
+            $$ = $2;
+            set_node_name($2, "this");
+        }
+    }
   | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
         $$ = make_node_simple(NODE_NEW, $2);
         add_child($$, $4);
         free($2);
+    }
+  | NEW STRING_C BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+        $$ = make_node_simple(NODE_NEW, "String");
+        add_child($$, $4);
     }
   | NOT expr_sans_binop {
         $$ = make_node_simple(NODE_NOT, NULL);

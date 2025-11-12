@@ -15,5 +15,6 @@ struct ASTNode {
 ASTNode* make_node(NodeType type, const std::string& name = "");
 ASTNode* make_node(NodeType type, int int_val);
 ASTNode* make_node(NodeType type, const std::string& str_val, bool is_string);
+void print_node(ASTNode* node);
 
 
