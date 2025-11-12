@@ -1,0 +1,21 @@
+
+class 
+    MyClass {
+        int x;
+        void test() {
+            x = 5;
+        }
+    }
+    
+
+class
+    Main {
+        public static void main (String test []){
+            int a=2;
+            if (a
+    }
+}
+
+
+
+

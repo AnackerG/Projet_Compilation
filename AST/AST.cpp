@@ -22,8 +22,3 @@ ASTNode* make_node(NodeType type, const std::string& str_val, bool) {
 }
 
 
-void add_child(ASTNode* parent, ASTNode* child) {
-    if (parent && child)
-        parent->children.push_back(child);
-}
-

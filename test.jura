@@ -1,6 +1,46 @@
-class Main {
-    public static void main (String test []){
-        int a=2;
+class Parent {
+    int parentVar;
+    boolean flag;
+
+    Parent() {
+        parentVar = 0;
+        flag = true;
+    }
+
+    void setParentVar(int val) {
+        parentVar = val;
+    }
+
+    int getParentVar() {
+        return parentVar;
     }
 }
 
+class Main extends Parent {
+    public static void main(String args[]) {
+        int a = 2;
+        boolean b = false;
+        String s = "Hello";
+        a = a + 3 * 2 - 1 / 1 % 2;
+        b = !b && true || false;
+        this.parentVar = a;
+        int[] arr = new int[10];
+        String t = new String();
+        if (a > 0) {
+            a = a - 1;
+        } else {
+            a = a + 1;
+        }
+        for (i = 0; i < 10; i = i + 1) {
+            a = a + i;
+        }
+        return;
+    }
+
+    void testMethod(int x, boolean y) {
+        x = x * 2;
+        y = !y;
+        this.flag = y;
+        String tmp = "Test";
+    }
+}

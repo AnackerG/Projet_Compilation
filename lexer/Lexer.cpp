@@ -47,14 +47,18 @@ void Lexer::advance() {
         currentChar = '\0';
     } else {
         currentChar = static_cast<char>(c);
+
         if (currentChar == '\n') {
             line++;
             column = 0;
+            currentLineStr.clear(); // nouvelle ligne
         } else {
             column++;
+            currentLineStr.push_back(currentChar); // ajoute le caractère courant à la ligne
         }
     }
 }
+
 
 Token Lexer::makeToken(TokenType type, const std::string& lexeme) {
     return Token{type, lexeme, line};
@@ -204,3 +208,6 @@ Token Lexer::nextToken() {
             }
     }
 }
+
+
+

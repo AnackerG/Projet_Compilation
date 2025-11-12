@@ -1,0 +1,22 @@
+
+class 
+    MyClass {
+        int x;
+        String b;
+        void test() {
+            x = 5;
+            b="test;
+        }
+    }
+    
+
+class
+    Main {
+        public static void main (String test []){
+            int a=2;
+    }
+}
+
+
+
+
