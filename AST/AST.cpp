@@ -70,9 +70,6 @@ void print_node(ASTNode* node, int indent) {
     int n = node->children.size();
     for(int i = 0; i < n; i++) {
         print_node(node->children[i], indent + 2);
-        if(i != n-1) {
-            std::cout << ", ";
-        }
     }
     std::cout << "\n";
 }
