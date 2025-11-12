@@ -77,4 +77,90 @@ void print_node(ASTNode* node, int indent) {
     std::cout << "\n";
 }
 
+std::string node_type_to_string(NodeType type) {
+    switch (type) {
+        case NODE_FILE: return "FILE_ROOT";
+        case NODE_CLASS: return "CLASS_DECL";
+        case NODE_CLASS_EXTENDS: return "CLASS_EXTENDS";
+        case NODE_MAIN: return "MAIN_METHOD";
+        case NODE_METHOD: return "METHOD_TYPED";
+        case NODE_METHOD_VOID: return "METHOD_VOID";
+        case NODE_CONSTRUCTOR: return "CONSTRUCTOR";
+        case NODE_TYPE: return "TYPE";
+        case NODE_PARAM: return "PARAMETER";
+        case NODE_STMT: return "STATEMENT_BASE";
+        case NODE_STMT_EMPTY: return "STMT_EMPTY";
+        case NODE_STMT_EXPR: return "STMT_EXPR";
+        case NODE_VAR_DECL: return "VAR_DECL";
+        case NODE_VAR_DECL_INIT: return "VAR_DECL_INIT";
+        case NODE_IF: return "IF";
+        case NODE_IF_ELSE: return "IF_ELSE";
+        case NODE_FOR: return "FOR_LOOP";
+        case NODE_RETURN: return "RETURN_STMT";
+        case NODE_EXPR: return "EXPRESSION_BASE";
+        case NODE_TRUE: return "LITERAL_TRUE";
+        case NODE_FALSE: return "LITERAL_FALSE";
+        case NODE_THIS: return "LITERAL_THIS";
+        case NODE_NULL: return "LITERAL_NULL";
+        case NODE_INTEGER: return "LITERAL_INT";
+        case NODE_STRING: return "LITERAL_STRING";
+        case NODE_FIELD: return "FIELD_ACCESS";
+        case NODE_FIELD_SET: return "FIELD_SET";
+        case NODE_METHOD_CALL: return "METHOD_CALL";
+        case NODE_SET: return "ASSIGNMENT";
+        case NODE_INSTANCEOF: return "INSTANCEOF";
+        case NODE_NOT: return "UNARY_NOT";
+        case NODE_NEG: return "UNARY_NEG";
+        case NODE_CAST: return "CAST";
+        case NODE_BINOP: return "BINOP_TYPE"; 
+        case NODE_NEW: return "NEW_OBJECT";
+        default: return "UNKNOWN_NODE_TYPE";
+    }
+}
 
+#include <fstream>
+#include <string>
+
+static int node_counter = 0;
+
+void write_dot_recursive(std::ofstream& file, ASTNode* node, int parent_id) {
+    if (!node) return;
+
+    int current_id = node_counter++;
+    std::string label;
+    
+    label = "Type: " + node_type_to_string(node->type);
+    if (!node->name.empty()) {
+        label += "\\nName: " + node->name;
+    } 
+
+    file << "    node" << current_id << " [label=\"" << label << "\"];\n";
+
+    if (parent_id != -1) {
+        file << "    node" << parent_id << " -> node" << current_id << ";\n";
+    }
+
+    for (ASTNode* child : node->children) {
+        write_dot_recursive(file, child, current_id);
+    }
+}
+
+void generate_dot_file(ASTNode* root, const std::string& filename) {
+    std::ofstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Erreur: Impossible d'ouvrir le fichier .dot" << std::endl;
+        return;
+    }
+
+    file << "digraph AST {\n";
+    file << "    rankdir=TB; // Top to Bottom\n";
+    file << "    node [shape=box];\n";
+
+    node_counter = 0; 
+    write_dot_recursive(file, root, -1);
+
+    file << "}\n";
+    file.close();
+    std::cout << "Fichier DOT généré: " << filename << std::endl;
+}

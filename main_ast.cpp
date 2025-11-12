@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
     gLexer = new Lexer(argv[1]);
     int res = yyparse();
     print_node(root);
+    generate_dot_file(root);
     delete gLexer;
     return res;
 }

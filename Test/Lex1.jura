@@ -1,14 +1,4 @@
 
-class 
-    MyClass {
-        int x;
-        void test() {
-            x = 5;
-            @x=2;
-        }
-    }
-    
-
 class
     Main {
         public static void main (String test []){
