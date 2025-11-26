@@ -15,6 +15,8 @@ int main(int argc, char** argv) {
     int res = yyparse();
     print_node(root);
     generate_dot_file(root);
+    system("dot -Tpng ast.dot -o ast.png");
+    system("open ast.png");
     delete gLexer;
     return res;
 }

@@ -16,15 +16,14 @@ class Parent {
     }
 }
 
-class Main extends Parent {
+class Main {
     public static void main(String args[]) {
         int a = 2;
         boolean b = false;
         String s = "Hello";
-        a = a + 3 * 2 - 1 / 1 % 2;
+        a = (a + 3) * 2 - 1 / 1 % 2;
         b = !b && true || false;
         this.parentVar = a;
-        int[] arr = new int[10];
         String t = new String();
         if (a > 0) {
             a = a - 1;
@@ -35,12 +34,5 @@ class Main extends Parent {
             a = a + i;
         }
         return;
-    }
-
-    void testMethod(int x, boolean y) {
-        x = x * 2;
-        y = !y;
-        this.flag = y;
-        String tmp = "Test";
     }
 }
