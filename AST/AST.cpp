@@ -21,6 +21,16 @@ ASTNode* make_node(NodeType type, const std::string& str_val, bool) {
     return node;
 }
 
+#include <algorithm>
+#include <cctype>
+
+static std::string to_upper(const std::string& s) {
+    std::string out = s;
+    std::transform(out.begin(), out.end(), out.begin(),
+                   [](unsigned char c){ return static_cast<char>(std::toupper(c)); });
+    return out;
+}
+
 void print_node_type(NodeType type) {
     switch (type) {
         case NODE_FILE: std::cout << "NODE_FILE"; break;
@@ -131,9 +141,22 @@ void write_dot_recursive(std::ofstream& file, ASTNode* node, int parent_id) {
     int current_id = node_counter++;
     std::string label;
     
-    label = node_type_to_string(node->type);
+    
+    if(node->type == NODE_VAR_DECL) {
+        label = to_upper(node->children[0]->name) + "_DECL";
+        node->children.erase(node->children.begin());
+    } else if(node->type == NODE_VAR_DECL_INIT) {
+        label = to_upper(node->children[0]->name) + "_DECL_INIT";
+        node->children.erase(node->children.begin());
+    } else {
+        label = node_type_to_string(node->type);
+    }
     if (!node->name.empty()) {
-        label += "\\nName: " + node->name;
+        if(node->type == NODE_BINOP) {
+            label = node->name;
+        } else {
+            label += "\\nName: " + node->name;
+        }
     } else if (node->int_val) {
         label += "\\nValue: " + std::to_string(node->int_val);
     } else if (!node->str_val.empty()) {
