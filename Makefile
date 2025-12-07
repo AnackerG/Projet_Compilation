@@ -35,8 +35,6 @@ AST_wrapper.o: AST/AST_wrapper.cpp AST/AST_wrapper.h AST/AST.h AST/AST_types.h
 # AST
 run_ast: main_ast.o bridge.o Lexer.o grammar.tab.o AST.o AST_wrapper.o
 	g++ $(CXXFLAGS) -o run_ast main_ast.o bridge.o Lexer.o grammar.tab.o AST.o AST_wrapper.o
-	dot -Tpng ast.dot -o ast.png
-	open ast.png
 
 main_ast.o: main_ast.cpp lexer/Lexer.h lexer/Token.h parser/grammar.tab.h
 	g++ $(CXXFLAGS) -c main_ast.cpp -o main_ast.o
