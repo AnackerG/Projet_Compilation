@@ -1,4 +1,9 @@
 #include "AST.h"
+#include <fstream>
+#include <string>
+
+static int node_counter = 0;
+
 
 ASTNode* make_node(NodeType type, const std::string& name) {
     ASTNode* node = new ASTNode();
@@ -129,11 +134,6 @@ std::string node_type_to_string(NodeType type) {
         default: return "UNKNOWN_NODE_TYPE";
     }
 }
-
-#include <fstream>
-#include <string>
-
-static int node_counter = 0;
 
 void write_dot_recursive(std::ofstream& file, ASTNode* node, int parent_id) {
     if (!node) return;
