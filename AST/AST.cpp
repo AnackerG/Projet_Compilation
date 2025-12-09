@@ -131,6 +131,7 @@ std::string node_type_to_string(NodeType type) {
         case NODE_CAST: return "CAST";
         case NODE_BINOP: return "BINOP_TYPE"; 
         case NODE_NEW: return "NEW_OBJECT";
+        case NODE_IDENTIFIER: return "IDENTIFIER";
         default: return "UNKNOWN_NODE_TYPE";
     }
 }
@@ -154,6 +155,8 @@ void write_dot_recursive(std::ofstream& file, ASTNode* node, int parent_id) {
     if (!node->name.empty()) {
         if(node->type == NODE_BINOP) {
             label = node->name;
+        } else if(node->type == NODE_VAR_DECL || node->type == NODE_VAR_DECL_INIT || node->type == NODE_SET) {
+            node->children.insert(node->children.begin(), make_node(NODE_IDENTIFIER, node->name));
         } else {
             label += "\\nName: " + node->name;
         }
