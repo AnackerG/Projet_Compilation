@@ -19,6 +19,11 @@ char* strdup(const char*);
 }
 #endif
 ASTNode* root = NULL;
+
+
+#include "compiler_variables.h"
+int bracket_count = 0;
+int curlbracket_count = 0;
 %}
 
 %union {
@@ -47,6 +52,7 @@ ASTNode* root = NULL;
 %type <node> expr expr_sans_binop postfix_expr postfix_expr_sans_binop
 %type <node> lexpr_opt lexpr
 %type <node> stmt_star stmt expr_opt
+%type <node> bracket_open bracket_close curlbracket_open curlbracket_close
 %type <str> binop
 
 %nonassoc LOWER_THAN_ELSE
@@ -63,6 +69,7 @@ ASTNode* root = NULL;
 
 %%
 
+
 file:
     CLASS class_star class_Main {
         $$ = make_node_simple(NODE_FILE, NULL);
@@ -70,6 +77,26 @@ file:
         add_child($$, $3);
         root = $$;
     }
+  ;
+
+bracket_open : BRACKET_OPEN {
+  bracket_count++;
+  }
+  ;
+
+bracket_close : BRACKET_CLOSE {
+  bracket_count--;
+  }
+  ;
+
+curlbracket_open : CURLBRACKET_OPEN {
+  curlbracket_count++;
+  }
+  ;
+
+curlbracket_close : CURLBRACKET_CLOSE {
+  curlbracket_count--;
+  }
   ;
 
 class_star:
@@ -83,12 +110,12 @@ class_star:
   ;
 
 class:
-    IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS {
+    IDENT curlbracket_open decl_star curlbracket_close CLASS {
         $$ = make_node_simple(NODE_CLASS, $1);
         add_child($$, $3);
         free($1);
     }
-  | IDENT EXTENDS IDENT CURLBRACKET_OPEN decl_star CURLBRACKET_CLOSE CLASS {
+  | IDENT EXTENDS IDENT curlbracket_open decl_star curlbracket_close CLASS {
         $$ = make_node_simple(NODE_CLASS_EXTENDS, $1);
         ASTNode* parent = make_node_simple(NODE_TYPE, $3);
         add_child($$, parent);
@@ -119,7 +146,7 @@ decl:
   ;
 
 constructor:
-    IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE {
+    IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
         $$ = make_node_simple(NODE_CONSTRUCTOR, $1);
         add_child($$, $3);
         add_child($$, $6);
@@ -128,19 +155,30 @@ constructor:
   ;
 
 method:
-    type IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE {
+    type IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
         $$ = make_node_simple(NODE_METHOD, $2);
         add_child($$, $1);
         add_child($$, $4);
         add_child($$, $7);
         free($2);
     }
-  | VOID IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE {
+  | VOID IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
         $$ = make_node_simple(NODE_METHOD_VOID, $2);
         add_child($$, $4);
         add_child($$, $7);
         free($2);
     }
+
+  | error curlbracket_close {
+    if (bracket_count > 0) {
+      fprintf(stderr, "Manque une parenthèse\n");
+    } else {
+      fprintf(stderr, "Manque une accolade\n");
+    }
+
+    yyclearin;
+    yyerrok;
+  }
   ;
 
 params_opt:
@@ -178,8 +216,8 @@ type:
   ;
 
 class_Main:
-    MAIN CURLBRACKET_OPEN PUBLIC STATIC VOID MAIN_C BRACKET_OPEN STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE BRACKET_CLOSE
-    CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE CURLBRACKET_CLOSE {
+    MAIN curlbracket_open PUBLIC STATIC VOID MAIN_C bracket_open STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE bracket_close
+     curlbracket_open stmt_star curlbracket_close curlbracket_close {
         $$ = make_node_simple(NODE_MAIN, NULL);
         add_child($$, $14);
         free($9);
@@ -198,7 +236,7 @@ expr:
   | FALSE { $$ = make_node_simple(NODE_FALSE, NULL); }
   | THIS { $$ = make_node_simple(NODE_THIS, NULL); }
   | NULL_TOKEN { $$ = make_node_simple(NODE_NULL, NULL); }
-  | BRACKET_OPEN expr BRACKET_CLOSE { $$ = $2; }
+  | bracket_open expr bracket_close { $$ = $2; }
   | IDENT { $$ = make_node_simple(NODE_EXPR, $1); free($1); }
   | IDENT postfix_expr {
         if (get_node_type($2) == NODE_STMT && !node_has_children($2)) {
@@ -220,12 +258,12 @@ expr:
             set_node_name($2, "this");
         }
     }
-  | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+  | NEW IDENT bracket_open lexpr_opt bracket_close {
         $$ = make_node_simple(NODE_NEW, $2);
         add_child($$, $4);
         free($2);
     }
-  | NEW STRING_C BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+  | NEW STRING_C bracket_open lexpr_opt bracket_close {
         $$ = make_node_simple(NODE_NEW, "String");
         add_child($$, $4);
     }
@@ -237,7 +275,7 @@ expr:
         $$ = make_node_simple(NODE_NEG, NULL);
         add_child($$, $2);
     }
-  | BRACKET_OPEN type BRACKET_CLOSE expr %prec CAST {
+  | bracket_open type bracket_close expr %prec CAST {
         $$ = make_node_simple(NODE_CAST, NULL);
         add_child($$, $2);
         add_child($$, $4);
@@ -260,7 +298,7 @@ expr_sans_binop:
   | FALSE { $$ = make_node_simple(NODE_FALSE, NULL); }
   | THIS { $$ = make_node_simple(NODE_THIS, NULL); }
   | NULL_TOKEN { $$ = make_node_simple(NODE_NULL, NULL); }
-  | BRACKET_OPEN expr BRACKET_CLOSE { $$ = $2; }
+  | bracket_open expr bracket_close { $$ = $2; }
   | IDENT postfix_expr_sans_binop {
         if (get_node_type($2) == NODE_STMT && !node_has_children($2)) {
             $$ = make_node_simple(NODE_EXPR, $1);
@@ -280,12 +318,12 @@ expr_sans_binop:
             $$ = make_node_simple(NODE_EXPR, "this");
         }
     }
-  | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+  | NEW IDENT bracket_open lexpr_opt bracket_close {
         $$ = make_node_simple(NODE_NEW, $2);
         add_child($$, $4);
         free($2);
     }
-  | NEW STRING_C BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+  | NEW STRING_C bracket_open lexpr_opt bracket_close {
         $$ = make_node_simple(NODE_NEW, "String");
         add_child($$, $4);
     }
@@ -297,7 +335,7 @@ expr_sans_binop:
         $$ = make_node_simple(NODE_NEG, NULL);
         add_child($$, $2);
     }
-  | BRACKET_OPEN type BRACKET_CLOSE expr_sans_binop %prec CAST {
+  | bracket_open type bracket_close expr_sans_binop %prec CAST {
         $$ = make_node_simple(NODE_CAST, NULL);
         add_child($$, $2);
         add_child($$, $4);
@@ -310,7 +348,7 @@ postfix_expr:
         $$ = make_node_simple(NODE_SET, NULL);
         add_child($$, $2);
     }
-  | BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+  | bracket_open lexpr_opt bracket_close {
         $$ = make_node_simple(NODE_METHOD_CALL, NULL);
         add_child($$, $2);
     }
@@ -323,7 +361,7 @@ postfix_expr:
         add_child($$, $4);
         free($2);
     }
-  | POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+  | POINT IDENT bracket_open lexpr_opt bracket_close {
         $$ = make_node_simple(NODE_METHOD_CALL, $2);
         add_child($$, $4);
         free($2);
@@ -340,7 +378,7 @@ postfix_expr_sans_binop:
         $$ = make_node_simple(NODE_SET, NULL);
         add_child($$, $2);
     }
-  | BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+  | bracket_open lexpr_opt bracket_close {
         $$ = make_node_simple(NODE_METHOD_CALL, NULL);
         add_child($$, $2);
     }
@@ -353,7 +391,7 @@ postfix_expr_sans_binop:
         add_child($$, $4);
         free($2);
     }
-  | POINT IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
+  | POINT IDENT bracket_open lexpr_opt bracket_close {
         $$ = make_node_simple(NODE_METHOD_CALL, $2);
         add_child($$, $4);
         free($2);
@@ -421,25 +459,25 @@ stmt:
         add_child($$, $4);
         free($2);
     }
-  | IF BRACKET_OPEN expr BRACKET_CLOSE stmt %prec LOWER_THAN_ELSE {
+  | IF bracket_open expr bracket_close stmt %prec LOWER_THAN_ELSE {
         $$ = make_node_simple(NODE_IF, NULL);
         add_child($$, $3);
         add_child($$, $5);
     }
-  | IF BRACKET_OPEN expr BRACKET_CLOSE stmt ELSE stmt {
+  | IF bracket_open expr bracket_close stmt ELSE stmt {
         $$ = make_node_simple(NODE_IF_ELSE, NULL);
         add_child($$, $3);
         add_child($$, $5);
         add_child($$, $7);
     }
-  | FOR BRACKET_OPEN expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt BRACKET_CLOSE stmt {
+  | FOR bracket_open expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt bracket_close stmt {
         $$ = make_node_simple(NODE_FOR, NULL);
         add_child($$, $3);
         add_child($$, $5);
         add_child($$, $7);
         add_child($$, $9);
     }
-  | CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE { $$ = $2; }
+  |  curlbracket_open stmt_star curlbracket_close { $$ = $2; }
   | RETURN SEMI_COLON { $$ = make_node_simple(NODE_RETURN, NULL); }
   | RETURN expr SEMI_COLON {
         $$ = make_node_simple(NODE_RETURN, NULL);
