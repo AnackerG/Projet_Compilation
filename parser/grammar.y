@@ -177,10 +177,12 @@ method:
     }
 
   | error curlbracket_close {
-    if (bracket_count > 0) {
-      fprintf(stderr, "Manque une parenthèse\n");
+    if (bracket_count == 0 && curlbracket_count == 0) {
+      fprintf(stderr, "* ERREUR : \'(\' ou \'{\' manquante \n\n");
+    } else if (bracket_count > 0) {
+      fprintf(stderr, "* ERREUR : \')\' manquante\n\n");
     } else {
-      fprintf(stderr, "Manque une accolade\n");
+      fprintf(stderr, "* ERREUR : \'}\' manquante\n\n");
     }
 
     yyclearin;
