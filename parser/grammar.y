@@ -121,7 +121,9 @@ decl:
 constructor:
     IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE {
         $$ = make_node_simple(NODE_CONSTRUCTOR, $1);
-        add_child($$, $3);
+        if (node_has_children($3)){
+          add_child($$, $3);
+        }        
         add_child($$, $6);
         free($1);
     }
@@ -131,13 +133,18 @@ method:
     type IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE {
         $$ = make_node_simple(NODE_METHOD, $2);
         add_child($$, $1);
-        add_child($$, $4);
+        if (node_has_children($4)){
+          add_child($$, $4);
+        }
+
         add_child($$, $7);
         free($2);
     }
   | VOID IDENT BRACKET_OPEN params_opt BRACKET_CLOSE CURLBRACKET_OPEN stmt_star CURLBRACKET_CLOSE {
         $$ = make_node_simple(NODE_METHOD_VOID, $2);
-        add_child($$, $4);
+        if (node_has_children($4)){
+          add_child($$, $4);
+        }
         add_child($$, $7);
         free($2);
     }
@@ -145,14 +152,14 @@ method:
 
 params_opt:
     /* empty */ {
-        $$ = make_node_simple(NODE_STMT, NULL);
+        $$ = make_node_simple(NODE_PARAMETER_LIST, NULL);
     }
   | params { $$ = $1; }
   ;
 
 params:
     type IDENT {
-        $$ = make_node_simple(NODE_STMT, NULL);
+        $$ = make_node_simple(NODE_PARAMETER_LIST, NULL);
         ASTNode* param = make_node_simple(NODE_PARAM, $2);
         add_child(param, $1);
         add_child($$, param);

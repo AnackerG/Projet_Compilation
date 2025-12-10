@@ -1,0 +1,22 @@
+class Test_Class {
+    int Compteur_de_tests_avant_que_ca_marche;
+
+    Test_Class (){
+        Compteur_de_tests_avant_que_ca_marche=2;
+    }
+
+    void set_error_count (int val){
+        Compteur_de_tests_avant_que_ca_marche = val;
+    }
+    
+    int get_error_count (){
+        return Compteur_de_tests_avant_que_ca_marche;
+    }
+}
+
+class Main {
+    public static void main(String args[]) {
+        
+
+    }
+}

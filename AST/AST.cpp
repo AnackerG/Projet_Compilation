@@ -121,6 +121,7 @@ std::string node_type_to_string(NodeType type) {
         case NODE_CAST: return "CAST";
         case NODE_BINOP: return "BINOP_TYPE"; 
         case NODE_NEW: return "NEW_OBJECT";
+        case NODE_PARAMETER_LIST: return "PARAMETER_LIST";
         default: return "UNKNOWN_NODE_TYPE";
     }
 }
