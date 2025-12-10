@@ -37,6 +37,7 @@ enum NodeType {
     NODE_CAST,
     NODE_BINOP,
     NODE_NEW,
+    NODE_PARAMETER_LIST,
     NODE_IDENTIFIER
 };
 
