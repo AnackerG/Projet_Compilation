@@ -3,6 +3,8 @@
 #include <cstring>
 #include <iostream>
 
+#include "compiler_variables.h"
+
 extern Lexer* gLexer;   
 extern YYSTYPE yylval;  
 
