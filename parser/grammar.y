@@ -217,7 +217,6 @@ expr:
             free_node($2);
         } else {
             $$ = $2;
-            set_node_name($2, "this");
         }
     }
   | NEW IDENT BRACKET_OPEN lexpr_opt BRACKET_CLOSE {
@@ -315,11 +314,13 @@ postfix_expr:
         add_child($$, $2);
     }
   | POINT IDENT {
-        $$ = make_node_simple(NODE_FIELD, $2);
+        $$ = make_node_simple(NODE_FIELD, NULL);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $2));
         free($2);
     }
   | POINT IDENT SET expr {
-        $$ = make_node_simple(NODE_FIELD_SET, $2);
+        $$ = make_node_simple(NODE_FIELD_SET, NULL);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $2));
         add_child($$, $4);
         free($2);
     }
@@ -349,7 +350,8 @@ postfix_expr_sans_binop:
         free($2);
     }
   | POINT IDENT SET expr_sans_binop {
-        $$ = make_node_simple(NODE_FIELD_SET, $2);
+        $$ = make_node_simple(NODE_FIELD_SET, NULL);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $2));
         add_child($$, $4);
         free($2);
     }
