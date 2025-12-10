@@ -38,5 +38,6 @@ enum NodeType {
     NODE_BINOP,
     NODE_NEW,
     NODE_PARAMETER_LIST
+    NODE_IDENTIFIER
 };
 
