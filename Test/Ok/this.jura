@@ -1,0 +1,12 @@
+class Parent {
+    int parentVar;
+    boolean flag;
+}
+
+class Main {
+    public static void main(String args[]) {
+        int a = 2;
+        this.parentVar = a;
+        return;
+    }
+}
