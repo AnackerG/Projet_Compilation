@@ -1,0 +1,11 @@
+
+class Main{
+     public static void main (String test []){
+        int a = 1;
+        int b = 2;
+        int c;
+        if (! (a == b) )  {
+            int c = 3;
+        }
+    }
+}

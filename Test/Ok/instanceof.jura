@@ -1,0 +1,14 @@
+
+class Main{
+     public static void main (String test []){
+        ClassTest object = new ClassTest();
+        if (object instanceof ClassTest) {
+            int c = 5;
+        }
+    }
+}
+
+class ClassTest 
+    {
+
+    }
