@@ -5,6 +5,7 @@ enum NodeType {
     NODE_FILE,
     NODE_CLASS,
     NODE_CLASS_EXTENDS,
+    NODE_EXTENDS,
     NODE_MAIN,
     NODE_METHOD,
     NODE_METHOD_VOID,

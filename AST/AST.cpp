@@ -99,6 +99,7 @@ std::string node_type_to_string(NodeType type) {
         case NODE_FILE: return "FILE_ROOT";
         case NODE_CLASS: return "CLASS_DECL";
         case NODE_CLASS_EXTENDS: return "CLASS_EXTENDS";
+        case NODE_EXTENDS: return "EXTENDS";
         case NODE_MAIN: return "MAIN_METHOD";
         case NODE_METHOD: return "METHOD_TYPED";
         case NODE_METHOD_VOID: return "METHOD_VOID";

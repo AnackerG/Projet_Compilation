@@ -114,15 +114,17 @@ class_star:
 class:
     IDENT curlbracket_open decl_star curlbracket_close CLASS {
         $$ = make_node_simple(NODE_CLASS, NULL);
-        add_child($$, make_node_simple(NODE_IDENTIFIER, $1));
+        add_child($$, make_node_string(NODE_IDENTIFIER, $1));
         if(node_has_children($3)) {
           add_child($$, $3);
         }
         free($1);
     }
   | IDENT EXTENDS IDENT curlbracket_open decl_star curlbracket_close CLASS {
-        $$ = make_node_simple(NODE_CLASS_EXTENDS, $1);
-        ASTNode* parent = make_node_simple(NODE_TYPE, $3);
+        $$ = make_node_simple(NODE_CLASS_EXTENDS, NULL);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $1));
+        ASTNode* parent = make_node_simple(NODE_EXTENDS, NULL);
+        add_child(parent, make_node_string(NODE_IDENTIFIER, $3));
         add_child($$, parent);
         if(node_has_children($5)) {
           add_child($$, $5);
@@ -154,7 +156,8 @@ decl:
 
 constructor:
     IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
-        $$ = make_node_simple(NODE_CONSTRUCTOR, $1);
+        $$ = make_node_simple(NODE_CONSTRUCTOR, NULL);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $1));
         if (node_has_children($3)){
           add_child($$, $3);
         }        
@@ -167,7 +170,8 @@ constructor:
 
 method:
     type IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
-        $$ = make_node_simple(NODE_METHOD, $2);
+        $$ = make_node_simple(NODE_METHOD, NULL);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $2));
         add_child($$, $1);
         if (node_has_children($4)){
           add_child($$, $4);
@@ -179,7 +183,8 @@ method:
         free($2);
     }
   | VOID IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
-        $$ = make_node_simple(NODE_METHOD_VOID, $2);
+        $$ = make_node_simple(NODE_METHOD_VOID, NULL);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $2));
         if (node_has_children($4)){
           add_child($$, $4);
         }
