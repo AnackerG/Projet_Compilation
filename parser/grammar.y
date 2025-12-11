@@ -514,6 +514,10 @@ stmt:
         $$ = make_node_simple(NODE_RETURN, NULL);
         add_child($$, $2);
     }
+  | method {
+    $$ = make_node_simple(NODE_METHOD, NULL);
+    add_child($$, $1);
+  }
   ;
 
 expr_opt:

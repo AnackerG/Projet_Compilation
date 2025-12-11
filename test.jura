@@ -7,8 +7,11 @@ class Parent {
         flag = true;
     }
 
-    void setParentVar(int val) {
+    void setParentVar (int val) {
         parentVar = val;
+        void test() {
+            int a;
+        }
     }
 
     int getParentVar() {
