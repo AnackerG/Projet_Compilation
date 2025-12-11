@@ -73,7 +73,9 @@ int curlbracket_count = 0;
 file:
     CLASS class_star class_Main {
         $$ = make_node_simple(NODE_FILE, NULL);
-        add_child($$, $2);
+        if(node_has_children($2)) {
+          add_child($$, $2);
+        }
         add_child($$, $3);
         root = $$;
     }
@@ -111,15 +113,20 @@ class_star:
 
 class:
     IDENT curlbracket_open decl_star curlbracket_close CLASS {
-        $$ = make_node_simple(NODE_CLASS, $1);
-        add_child($$, $3);
+        $$ = make_node_simple(NODE_CLASS, NULL);
+        add_child($$, make_node_simple(NODE_IDENTIFIER, $1));
+        if(node_has_children($3)) {
+          add_child($$, $3);
+        }
         free($1);
     }
   | IDENT EXTENDS IDENT curlbracket_open decl_star curlbracket_close CLASS {
         $$ = make_node_simple(NODE_CLASS_EXTENDS, $1);
         ASTNode* parent = make_node_simple(NODE_TYPE, $3);
         add_child($$, parent);
-        add_child($$, $5);
+        if(node_has_children($5)) {
+          add_child($$, $5);
+        }
         free($1);
         free($3);
     }
@@ -151,7 +158,9 @@ constructor:
         if (node_has_children($3)){
           add_child($$, $3);
         }        
-        add_child($$, $6);
+        if(node_has_children($6)) {
+          add_child($$, $6);
+        }
         free($1);
     }
   ;
@@ -164,7 +173,9 @@ method:
           add_child($$, $4);
         }
 
-        add_child($$, $7);
+        if(node_has_children($7)) {
+          add_child($$, $7);
+        }
         free($2);
     }
   | VOID IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
@@ -172,15 +183,19 @@ method:
         if (node_has_children($4)){
           add_child($$, $4);
         }
-        add_child($$, $7);
+        if(node_has_children($7)) {
+          add_child($$, $7);
+        }
         free($2);
     }
 
   | error curlbracket_close {
-    if (bracket_count > 0) {
-      fprintf(stderr, "Manque une parenthèse\n");
+    if (bracket_count == 0 && curlbracket_count == 0) {
+      fprintf(stderr, "* ERREUR : \'(\' ou \'{\' manquante \n\n");
+    } else if (bracket_count > 0) {
+      fprintf(stderr, "* ERREUR : \')\' manquante\n\n");
     } else {
-      fprintf(stderr, "Manque une accolade\n");
+      fprintf(stderr, "* ERREUR : \'}\' manquante\n\n");
     }
 
     yyclearin;
@@ -226,7 +241,9 @@ class_Main:
     MAIN curlbracket_open PUBLIC STATIC VOID MAIN_C bracket_open STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE bracket_close
      curlbracket_open stmt_star curlbracket_close curlbracket_close {
         $$ = make_node_simple(NODE_MAIN, NULL);
-        add_child($$, $14);
+        if(node_has_children($14)) {
+          add_child($$, $14);
+        }
         free($9);
     }
   ;

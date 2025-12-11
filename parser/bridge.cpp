@@ -193,7 +193,7 @@ extern "C" void yyerror(const char* msg) {
         currentLine = gLexer->getCurrentLine();
     }
 
-    std::cerr << "Erreur de syntaxe à la ligne " << line << ", colonne " << col << " : " << msg << std::endl;
+    std::cerr << "ERREUR : ligne : " << line << ", colonne : " << col << std::endl;
     
     if (!currentLine.empty()) {
         std::cerr << currentLine << std::endl;

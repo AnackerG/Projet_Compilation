@@ -161,7 +161,7 @@ void write_dot_recursive(std::ofstream& file, ASTNode* node, int parent_id) {
         } else {
             label += "\\nName: " + node->name;
         }
-    } else if (node->int_val) {
+    } else if (node->type == NODE_INTEGER) {
         label += "\\nValue: " + std::to_string(node->int_val);
     } else if (!node->str_val.empty()) {
         label += "\\nValue: " + node->str_val;
