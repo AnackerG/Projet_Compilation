@@ -54,6 +54,7 @@ int curlbracket_count = 0;
 %type <node> stmt_star stmt expr_opt
 %type <node> bracket_open bracket_close curlbracket_open curlbracket_close
 %type <str> binop
+%type <node> expr_deg1 expr_deg2 expr_deg3 expr_deg4 expr_deg5 expr_deg6
 
 %nonassoc LOWER_THAN_ELSE
 %right SET
@@ -168,40 +169,51 @@ constructor:
     }
   ;
 
+method_init:
+  /* empty */ {
+    curlbracket_count=0;
+    bracket_count=0;
+  }
+  ;
+
 method:
-    type IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
+    method_init type IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
         $$ = make_node_simple(NODE_METHOD, NULL);
-        add_child($$, make_node_string(NODE_IDENTIFIER, $2));
-        add_child($$, $1);
-        if (node_has_children($4)){
-          add_child($$, $4);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $3));
+        add_child($$, $2);
+        if (node_has_children($5)){
+          add_child($$, $5);
         }
 
-        if(node_has_children($7)) {
-          add_child($$, $7);
+        if(node_has_children($8)) {
+          add_child($$, $8);
         }
-        free($2);
+        free($3);
     }
-  | VOID IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
+  | method_init VOID IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
         $$ = make_node_simple(NODE_METHOD_VOID, NULL);
-        add_child($$, make_node_string(NODE_IDENTIFIER, $2));
-        if (node_has_children($4)){
-          add_child($$, $4);
+        add_child($$, make_node_string(NODE_IDENTIFIER, $3));
+        if (node_has_children($5)){
+          add_child($$, $5);
         }
-        if(node_has_children($7)) {
-          add_child($$, $7);
+        if(node_has_children($8)) {
+          add_child($$, $8);
         }
-        free($2);
+        free($3);
     }
 
   | error curlbracket_close {
-    if (bracket_count == 0 && curlbracket_count == 0) {
+    if (bracket_count <= 0 && curlbracket_count <= 0) {
       fprintf(stderr, "* ERREUR : \'(\' ou \'{\' manquante \n\n");
     } else if (bracket_count > 0) {
       fprintf(stderr, "* ERREUR : \')\' manquante\n\n");
     } else {
       fprintf(stderr, "* ERREUR : \'}\' manquante\n\n");
+      printf("bracket_count : %d\n curlbracket_count : %d\n", bracket_count, curlbracket_count);
     }
+
+    bracket_count=0;
+    curlbracket_count=0;
 
     yyclearin;
     yyerrok;
@@ -308,13 +320,148 @@ expr:
         add_child($$, $2);
         add_child($$, $4);
     }
-  | expr_sans_binop binop expr {
-        $$ = make_node_simple(NODE_BINOP, $2);
-        add_child($$, $1);
-        add_child($$, $3);
-        free($2);
-    }
+  | expr_deg1
   ;
+
+expr_deg1:
+    expr_deg1 OR expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "||");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg2 OR expr_deg1 {
+    $$ = make_node_simple(NODE_BINOP, "||");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg2
+  ;
+
+expr_deg2:
+    expr_deg2 AND expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "&&");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg3 AND expr_deg2 {
+    $$ = make_node_simple(NODE_BINOP, "&&");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg3
+  ;
+
+expr_deg3:
+    expr_deg3 EQUALS expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "==");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg3 DIFFERENT expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "!=");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg4 EQUALS expr_deg3 {
+    $$ = make_node_simple(NODE_BINOP, "==");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg4 DIFFERENT expr_deg3 {
+    $$ = make_node_simple(NODE_BINOP, "!=");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg4
+  ;
+
+expr_deg4:
+    expr_deg4 SMALLER expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "<");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg4 SMALLER_OR_EQUAL expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "<=");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg4 BIGGER expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, ">");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg4 BIGGER_OR_EQUAL expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, ">=");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg5 SMALLER expr_deg4 {
+    $$ = make_node_simple(NODE_BINOP, "<");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg5 SMALLER_OR_EQUAL expr_deg4 {
+    $$ = make_node_simple(NODE_BINOP, "<=");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg5 BIGGER expr_deg4 {
+    $$ = make_node_simple(NODE_BINOP, ">");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg5 BIGGER_OR_EQUAL expr_deg4 {
+    $$ = make_node_simple(NODE_BINOP, ">=");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg5
+  ;
+
+expr_deg5:
+    expr_deg5 PLUS expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "+");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg5 MINUS expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "-");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg6 PLUS expr_deg5 {
+    $$ = make_node_simple(NODE_BINOP, "+");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg6 MINUS expr_deg5 {
+    $$ = make_node_simple(NODE_BINOP, "-");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg6
+  ;
+
+expr_deg6:
+    expr_deg6 TIMES expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "*");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg6 DIVIDE expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "/");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_deg6 REMAIN expr_sans_binop {
+    $$ = make_node_simple(NODE_BINOP, "%");
+    add_child($$, $1);
+    add_child($$, $3);
+  }
+  | expr_sans_binop
+  ;
+
 
 expr_sans_binop:
     INTEGER { $$ = make_node_int(NODE_INTEGER, $1); }
@@ -369,6 +516,9 @@ expr_sans_binop:
         add_child($$, $4);
     }
   ;
+
+
+
 
 postfix_expr:
     /* empty */ { $$ = make_node_simple(NODE_STMT, NULL); }
