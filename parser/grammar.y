@@ -53,7 +53,6 @@ int curlbracket_count = 0;
 %type <node> lexpr_opt lexpr
 %type <node> stmt_star stmt expr_opt
 %type <node> bracket_open bracket_close curlbracket_open curlbracket_close
-%type <str> binop
 %type <node> expr_deg1 expr_deg2 expr_deg3 expr_deg4 expr_deg5 expr_deg6
 
 %nonassoc LOWER_THAN_ELSE
@@ -581,22 +580,6 @@ postfix_expr_sans_binop:
         $$ = make_node_simple(NODE_INSTANCEOF, NULL);
         add_child($$, $2);
     }
-  ;
-
-binop:
-    EQUALS { $$ = strdup("=="); }
-  | DIFFERENT { $$ = strdup("!="); }
-  | SMALLER { $$ = strdup("<"); }
-  | SMALLER_OR_EQUAL { $$ = strdup("<="); }
-  | BIGGER { $$ = strdup(">"); }
-  | BIGGER_OR_EQUAL { $$ = strdup(">="); }
-  | PLUS { $$ = strdup("+"); }
-  | MINUS { $$ = strdup("-"); }
-  | TIMES { $$ = strdup("*"); }
-  | DIVIDE { $$ = strdup("/"); }
-  | REMAIN { $$ = strdup("%"); }
-  | AND { $$ = strdup("&&"); }
-  | OR { $$ = strdup("||"); }
   ;
 
 lexpr_opt:
