@@ -72,12 +72,15 @@
   
   
   file:
-      CLASS class_star class_Main {
+      class_star class_Main class_star {
           $$ = make_node_simple(NODE_FILE, NULL);
-          if(node_has_children($2)) {
-            add_child($$, $2);
+          if(node_has_children($1)) {
+            add_child($$, $1);
           }
-          add_child($$, $3);
+          add_child($$, $2);
+          if(node_has_children($3)) {
+            add_child($$, $3);
+          }
           root = $$;
       }
     ;
@@ -113,25 +116,25 @@
     ;
   
   class:
-      IDENT curlbracket_open decl_star curlbracket_close CLASS {
+      CLASS IDENT curlbracket_open decl_star curlbracket_close {
           $$ = make_node_simple(NODE_CLASS, NULL);
-          add_child($$, make_node_string(NODE_IDENTIFIER, $1));
-          if(node_has_children($3)) {
-            add_child($$, $3);
+          add_child($$, make_node_string(NODE_IDENTIFIER, $2));
+          if(node_has_children($4)) {
+            add_child($$, $4);
           }
-          free($1);
+          free($2);
       }
-    | IDENT EXTENDS IDENT curlbracket_open decl_star curlbracket_close CLASS {
+    | CLASS IDENT EXTENDS IDENT curlbracket_open decl_star curlbracket_close {
           $$ = make_node_simple(NODE_CLASS_EXTENDS, NULL);
-          add_child($$, make_node_string(NODE_IDENTIFIER, $1));
+          add_child($$, make_node_string(NODE_IDENTIFIER, $2));
           ASTNode* parent = make_node_simple(NODE_EXTENDS, NULL);
-          add_child(parent, make_node_string(NODE_IDENTIFIER, $3));
+          add_child(parent, make_node_string(NODE_IDENTIFIER, $4));
           add_child($$, parent);
-          if(node_has_children($5)) {
-            add_child($$, $5);
+          if(node_has_children($6)) {
+            add_child($$, $6);
           }
-          free($1);
-          free($3);
+          free($2);
+          free($4);
       }
     ;
   
@@ -295,13 +298,13 @@
     ;
   
   class_Main:
-      MAIN curlbracket_open PUBLIC STATIC VOID MAIN_C bracket_open STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE bracket_close
+      CLASS MAIN curlbracket_open PUBLIC STATIC VOID MAIN_C bracket_open STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE bracket_close
        curlbracket_open stmt_star curlbracket_close curlbracket_close {
           $$ = make_node_simple(NODE_MAIN, NULL);
-          if(node_has_children($14)) {
-            add_child($$, $14);
+          if(node_has_children($15)) {
+            add_child($$, $15);
           }
-          free($9);
+          free($10);
       }
     ;
   
