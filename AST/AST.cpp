@@ -1,4 +1,5 @@
 #include "AST.h"
+#include "AST_types.h"
 #include <fstream>
 #include <string>
 
@@ -73,6 +74,7 @@ void print_node_type(NodeType type) {
         case NODE_CAST: std::cout << "NODE_CAST"; break;
         case NODE_BINOP: std::cout << "NODE_BINOP"; break;
         case NODE_NEW: std::cout << "NODE_NEW"; break;
+        case NODE_ERROR: std::cout << "NODE_ERROR"; break;
         default: std::cout << "UNKNOWN_NODE_TYPE"; break;
     }
 }
@@ -134,6 +136,7 @@ std::string node_type_to_string(NodeType type) {
         case NODE_NEW: return "NEW_OBJECT";
         case NODE_IDENTIFIER: return "IDENTIFIER";
         case NODE_PARAMETER_LIST: return "PARAMETER_LIST";
+        case NODE_ERROR: return "ERROR";
         default: return "UNKNOWN_NODE_TYPE";
     }
 }
