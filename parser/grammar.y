@@ -152,7 +152,9 @@
           free($2);
       }
     | constructor { $$ = $1; }
-    | method { $$ = $1; }
+    | method {
+      $$ = $1;
+    }
     ;
   
   constructor:
@@ -195,43 +197,62 @@
           }
           free($2);
       }
-    
 
     | type IDENT bracket_open params_opt bracket_close error {
-      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode");
-
+      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'{\' manquante)");
       fprintf(stderr, "ERREUR : \'{\' manquante \n\n");
+
       int curlbracket_count_temp = 1;
+
       int t;
       while (curlbracket_count_temp > 0 && (t = yylex()) != EOF) {
           if (t == CURLBRACKET_OPEN) curlbracket_count_temp++;
           if (t == CURLBRACKET_CLOSE) curlbracket_count_temp--;
       }
+
       yyclearin;
       yyerrok;
     }
 
     | VOID IDENT bracket_open params_opt bracket_close error {
-      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode");
-
+      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'{\' manquante)");
       fprintf(stderr, "ERREUR : \'{\' manquante \n\n");
+
       int curlbracket_count_temp = 1;
+
       int t;
       while (curlbracket_count_temp > 0 && (t = yylex()) != EOF) {
           if (t == CURLBRACKET_OPEN) curlbracket_count_temp++;
           if (t == CURLBRACKET_CLOSE) curlbracket_count_temp--;
       }
+
       yyclearin;
       yyerrok;
     }
   
     | error curlbracket_close {
       if (bracket_count <= 0 && curlbracket_count <= 0) {
+        $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'(\' manquante)");
         fprintf(stderr, "* ERREUR : \'(\' manquante \n\n");
+
+        int curlbracket_count_temp = 1;
+        int t;
+        while (curlbracket_count_temp > 0 && (t = yylex()) != EOF) {
+            if (t == CURLBRACKET_OPEN) curlbracket_count_temp++;
+            if (t == CURLBRACKET_CLOSE) curlbracket_count_temp--;
+        }
+
       } else if (bracket_count > 0) {
+        $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\')\' manquante)");
         fprintf(stderr, "* ERREUR : \')\' manquante\n\n");
-      } else {
-        fprintf(stderr, "* ERREUR : \'}\' manquante\n\n");
+        
+        int curlbracket_count_temp = 1;
+        int t;
+        while (curlbracket_count_temp > 0 && (t = yylex()) != EOF) {
+            if (t == CURLBRACKET_OPEN) curlbracket_count_temp++;
+            if (t == CURLBRACKET_CLOSE) curlbracket_count_temp--;
+        }
+
       }
   
       yyclearin;
