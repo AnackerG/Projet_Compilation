@@ -5,6 +5,8 @@
 
 #include "compiler_variables.h"
 
+#define UNUSED(x) (void)(x)
+
 extern Lexer* gLexer;   
 extern YYSTYPE yylval;  
 
@@ -183,6 +185,7 @@ extern "C" int yylex() {
 
 
 extern "C" void yyerror(const char* msg) {
+    UNUSED(msg);
     int line = 0;
     int col = 0;
     std::string currentLine;

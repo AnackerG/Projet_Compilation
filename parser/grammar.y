@@ -72,15 +72,12 @@
   
   
   file:
-      class_star class_Main class_star {
+      class_star class_Main {
           $$ = make_node_simple(NODE_FILE, NULL);
           if(node_has_children($1)) {
             add_child($$, $1);
           }
           add_child($$, $2);
-          if(node_has_children($3)) {
-            add_child($$, $3);
-          }
           root = $$;
       }
     ;
@@ -135,6 +132,10 @@
           }
           free($2);
           free($4);
+      }
+    
+      | CLASS IDENT curlbracket_open decl_star error CLASS {
+        fprintf(stderr, "Il manque une }");
       }
     ;
   
@@ -560,8 +561,8 @@
       }
     ;
   
-  postfix_expr:
-      /* empty */ { $$ = make_node_simple(NODE_STMT, NULL); }
+    postfix_expr:
+        /* empty */ { $$ = make_node_simple(NODE_STMT, NULL); }
     | SET expr {
           $$ = make_node_simple(NODE_SET, NULL);
           add_child($$, $2);

@@ -1,6 +1,9 @@
 #include "lexer/Lexer.h"
 #include "AST/AST.h"
 #include <iostream>
+
+#define UNUSED(x) (void)(x)
+
 Lexer* gLexer;
 
 // pour l'instant c'est le même que celui du parseur, on modifiera après
@@ -9,7 +12,7 @@ extern "C" int yyparse();
 extern ASTNode *root;
 
 int main(int argc, char** argv) {
-
+    UNUSED(argc);
 
     gLexer = new Lexer(argv[1]);
     int res = yyparse();
