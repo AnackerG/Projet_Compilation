@@ -58,6 +58,7 @@ int curlbracket_count = 0;
 %type <node> stmt_star stmt expr_opt
 %type <node> bracket_open bracket_close curlbracket_open curlbracket_close
 %type <node> expr_deg1 expr_deg2 expr_deg3 expr_deg4 expr_deg5 expr_deg6
+%type <node> semi_colon
 
 
 %nonassoc LOWER_THAN_ELSE
@@ -142,7 +143,6 @@ class:
       $$ = make_node_simple(NODE_ERROR, "Erreur de génération de classe (\'}\' manquante)");
       fprintf(stderr, "ERREUR : \'}\' manquante \n\n");
 
-      yyclearin;
       yyerrok;
   }
 
@@ -150,7 +150,6 @@ class:
       $$ = make_node_simple(NODE_ERROR, "Erreur de génération de classe (\'}\' manquante)");
       fprintf(stderr, "ERREUR : \'}\' manquante \n\n");
 
-      yyclearin;
       yyerrok;
   }
 
@@ -196,7 +195,7 @@ decl_star:
   ;
 
 decl:
-    type IDENT SEMI_COLON {
+    type IDENT semi_colon {
         $$ = make_node_simple(NODE_VAR_DECL, $2);
         add_child($$, $1);
         free($2);
@@ -756,17 +755,17 @@ stmt_star:
   ;
 
 stmt:
-    SEMI_COLON { $$ = make_node_simple(NODE_STMT_EMPTY, NULL); }
-  | expr SEMI_COLON {
+    semi_colon { $$ = make_node_simple(NODE_STMT_EMPTY, NULL); }
+  | expr semi_colon {
         $$ = make_node_simple(NODE_STMT_EXPR, NULL);
         add_child($$, $1);
     }
-  | type IDENT SEMI_COLON {
+  | type IDENT semi_colon {
         $$ = make_node_simple(NODE_VAR_DECL, $2);
         add_child($$, $1);
         free($2);
     }
-  | type IDENT SET expr SEMI_COLON {
+  | type IDENT SET expr semi_colon {
         $$ = make_node_simple(NODE_VAR_DECL_INIT, $2);
         add_child($$, $1);
         add_child($$, $4);
@@ -783,7 +782,7 @@ stmt:
         add_child($$, $5);
         add_child($$, $7);
     }
-  | FOR bracket_open expr_opt SEMI_COLON expr_opt SEMI_COLON expr_opt bracket_close stmt {
+  | FOR bracket_open expr_opt semi_colon expr_opt semi_colon expr_opt bracket_close stmt {
         $$ = make_node_simple(NODE_FOR, NULL);
         add_child($$, $3);
         add_child($$, $5);
@@ -791,14 +790,23 @@ stmt:
         add_child($$, $9);
     }
   |  curlbracket_open stmt_star curlbracket_close { $$ = $2; }
-  | RETURN SEMI_COLON { $$ = make_node_simple(NODE_RETURN, NULL); }
-  | RETURN expr SEMI_COLON {
+  | RETURN semi_colon { $$ = make_node_simple(NODE_RETURN, NULL); }
+  | RETURN expr semi_colon {
         $$ = make_node_simple(NODE_RETURN, NULL);
         add_child($$, $2);
     }
   | method {
     $$ = make_node_simple(NODE_METHOD, NULL);
     add_child($$, $1);
+  }
+  ;
+
+semi_colon:
+    SEMI_COLON {
+  }
+  | error {
+    fprintf(stderr, " * ERREUR : \';\' manquant\n\n");
+    yyerrok;
   }
   ;
 

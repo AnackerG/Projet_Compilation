@@ -7,7 +7,7 @@ class Parent {
         flag = true;
     }
 
-    void setParentVar (int val) {
+    void setParentVar (int val, String val2) {
         parentVar = val;
         void test() {
             int a;
