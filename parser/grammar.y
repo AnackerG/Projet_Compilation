@@ -90,20 +90,36 @@ file:
 bracket_open : BRACKET_OPEN {
   bracket_count++;
   }
+  | error {
+    fprintf(stderr, "ERREUR : \'(\' manquante \n\n");
+    yyerrok;
+  }
   ;
 
 bracket_close : BRACKET_CLOSE {
   bracket_count--;
+  }
+  | error {
+    fprintf(stderr, "ERREUR : \')\' manquante \n\n");
+    yyerrok;
   }
   ;
 
 curlbracket_open : CURLBRACKET_OPEN {
   curlbracket_count++;
   }
+  | error {
+    fprintf(stderr, "ERREUR : \'{\' manquante \n\n");
+    yyerrok;
+  }
   ;
 
 curlbracket_close : CURLBRACKET_CLOSE {
   curlbracket_count--;
+  }
+  | error {
+    fprintf(stderr, "ERREUR : \'}\' manquante \n\n");
+    yyerrok;
   }
   ;
 
@@ -138,46 +154,12 @@ class:
         free($2);
         free($4);
     }
-  
-  | CLASS IDENT curlbracket_open decl_star error CLASS {
-      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de classe (\'}\' manquante)");
-      fprintf(stderr, "ERREUR : \'}\' manquante \n\n");
-
-      yyerrok;
-  }
-
-  | CLASS IDENT EXTENDS IDENT curlbracket_open decl_star error CLASS {
-      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de classe (\'}\' manquante)");
-      fprintf(stderr, "ERREUR : \'}\' manquante \n\n");
-
-      yyerrok;
-  }
 
   | CLASS IDENT EXTENDS error {
     $$ = make_node_simple(NODE_ERROR, "Erreur de génération de classe (extends non renseigne)");
     fprintf(stderr, "ERREUR : extends non renseigne\n\n");
 
     read_until_correct_curlbracketclose(0);
-
-    yyclearin;
-    yyerrok;
-  }
-
-  | CLASS IDENT error {
-    $$ = make_node_simple(NODE_ERROR, "Erreur de génération de classe (\'{\' manquante)");
-    fprintf(stderr, "ERREUR : \'{\' manquante \n\n");
-
-    read_until_correct_curlbracketclose(1);
-
-    yyclearin;
-    yyerrok;
-  }
-
-  | CLASS IDENT EXTENDS IDENT error {
-    $$ = make_node_simple(NODE_ERROR, "Erreur de génération de classe (\'{\' manquante)");
-    fprintf(stderr, "ERREUR : \'{\' manquante \n\n");
-
-    read_until_correct_curlbracketclose(1);
 
     yyclearin;
     yyerrok;
@@ -217,36 +199,6 @@ constructor:
           add_child($$, $6);
         }
         free($1);
-    }
-
-    | IDENT bracket_open params_opt bracket_close error {
-      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de constructeur (\'{\' manquante)");
-      fprintf(stderr, "ERREUR : \'{\' manquante \n\n");
-  
-      read_until_correct_curlbracketclose(1);
-  
-      yyclearin;
-      yyerrok;
-    }
-
-    | IDENT params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
-      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de constructeur (\'(\' manquante)");
-      fprintf(stderr, "* ERREUR : \'(\' manquante \n\n");
-
-      read_until_correct_curlbracketclose(0);
-  
-      yyclearin;
-      yyerrok;
-    }
-
-    | IDENT bracket_open params_opt curlbracket_open stmt_star curlbracket_close {
-      $$ = make_node_simple(NODE_ERROR, "Erreur de génération de constructeur (\')\' manquante)");
-      fprintf(stderr, "* ERREUR : \')\' manquante \n\n");
-
-      read_until_correct_curlbracketclose(0);
-  
-      yyclearin;
-      yyerrok;
     }
   ;
 
@@ -305,62 +257,6 @@ method:
       free($2);
 
       yyerrok;
-  }
-
-  | type IDENT bracket_open params_opt bracket_close error {
-    $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'{\' manquante)");
-    fprintf(stderr, "ERREUR : \'{\' manquante\n\n");
-
-    read_until_correct_curlbracketclose(1);
-
-    yyclearin;
-    yyerrok;
-  }
-
-  | VOID IDENT bracket_open params_opt bracket_close error {
-    $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'{\' manquante)");
-    fprintf(stderr, "ERREUR : \'{\' manquante\n\n");
-
-    read_until_correct_curlbracketclose(1);
-
-    yyclearin;
-    yyerrok;
-  }
-
-  | type IDENT params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
-    $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'(\' manquante)");
-    fprintf(stderr, "* ERREUR : \'(\' manquante\n\n");
-
-    read_until_correct_curlbracketclose(0);
-    yyclearin;
-    yyerrok;
-  }
-
-  | VOID IDENT params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
-    $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'(\' manquante)");
-    fprintf(stderr, "* ERREUR : \'(\' manquante\n\n");
-
-    read_until_correct_curlbracketclose(0);
-    yyclearin;
-    yyerrok;
-  }
-
-  | type IDENT bracket_open params_opt curlbracket_open stmt_star curlbracket_close {
-    $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\')\' manquante)");
-    fprintf(stderr, "* ERREUR : \')' manquante\n\n");
-
-    read_until_correct_curlbracketclose(0);
-    yyclearin;
-    yyerrok;
-  }
-
-  | VOID IDENT bracket_open params_opt curlbracket_open stmt_star curlbracket_close {
-    $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\')\' manquante)");
-    fprintf(stderr, "* ERREUR : \')' manquante\n\n");
-
-    read_until_correct_curlbracketclose(0);
-    yyclearin;
-    yyerrok;
   }
   ;
 
