@@ -231,6 +231,7 @@
       }
   
       | IDENT params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
+        yyerror("Erreur : \'(\' manquante");
         $$ = make_node_simple(NODE_ERROR, "Erreur de génération de constructeur (\'(\' manquante)");
         fprintf(stderr, "* ERREUR : \'(\' manquante \n\n");
   
@@ -241,6 +242,7 @@
       }
   
       | IDENT bracket_open params_opt curlbracket_open stmt_star curlbracket_close {
+        yyerror("Erreur : \')\' manquante");
         $$ = make_node_simple(NODE_ERROR, "Erreur de génération de constructeur (\')\' manquante)");
         fprintf(stderr, "* ERREUR : \')\' manquante \n\n");
   
@@ -329,6 +331,8 @@
     }
   
     | type IDENT params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
+      yyerror("Erreur : \'(\' manquante");
+
       $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'(\' manquante)");
       fprintf(stderr, "* ERREUR : \'(\' manquante\n\n");
   
@@ -338,6 +342,8 @@
     }
   
     | VOID IDENT params_opt bracket_close curlbracket_open stmt_star curlbracket_close {
+      yyerror("Erreur : \'(\' manquante");
+
       $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\'(\' manquante)");
       fprintf(stderr, "* ERREUR : \'(\' manquante\n\n");
   
@@ -347,6 +353,8 @@
     }
   
     | type IDENT bracket_open params_opt curlbracket_open stmt_star curlbracket_close {
+      yyerror("Erreur : \')\' manquante");
+
       $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\')\' manquante)");
       fprintf(stderr, "* ERREUR : \')' manquante\n\n");
   
@@ -356,6 +364,8 @@
     }
   
     | VOID IDENT bracket_open params_opt curlbracket_open stmt_star curlbracket_close {
+      yyerror("Erreur : \')\' manquante");
+
       $$ = make_node_simple(NODE_ERROR, "Erreur de génération de méthode (\')\' manquante)");
       fprintf(stderr, "* ERREUR : \')' manquante\n\n");
   
@@ -397,6 +407,12 @@
           free($1);
       }
     | STRING_C { $$ = make_node_simple(NODE_TYPE, "string"); }
+    | error {
+      $$ = make_node_simple(NODE_ERROR, "Erreur : erreur de type");
+      fprintf(stderr, " * ERREUR : type invalide\n\n");
+
+      yyerrok;
+    }
     ;
   
   class_Main:
@@ -773,8 +789,8 @@
           free($2);
       }
     | if_cond { $$=$1; }
-    | for_loop { $$=$1;s }
-    |  curlbracket_open stmt_star curlbracket_close { $$ = $2; }
+    | for_loop { $$=$1; }
+    | curlbracket_open stmt_star curlbracket_close { $$ = $2; }
     | RETURN semi_colon { $$ = make_node_simple(NODE_RETURN, NULL); }
     | RETURN expr semi_colon {
           $$ = make_node_simple(NODE_RETURN, NULL);
@@ -784,10 +800,23 @@
       $$ = make_node_simple(NODE_METHOD, NULL);
       add_child($$, $1);
     }
+    | type IDENT SET semi_colon {
+      yyerror("Erreur : Expression manquante");
+      $$ = make_node_simple(NODE_ERROR, "Expression manquante");
+      fprintf(stderr, " * ERREUR : Expression manquante\n\n");
+
+      yyerrok;
+    }
+    | error SEMI_COLON {
+      $$ = make_node_simple(NODE_ERROR, "Erreur Statement");
+      fprintf(stderr, "Error Statement : syntaxe incorrect\n\n");
+      yyerrok;
+      yyclearin;
+    }
     ;
 
 
-    if_cond:
+if_cond:
     IF bracket_open expr bracket_close stmt %prec LOWER_THAN_ELSE {
     $$ = make_node_simple(NODE_IF, NULL);
     add_child($$, $3);
@@ -825,6 +854,30 @@ for_loop:
       add_child($$, $7);
       add_child($$, $9);
   }
+  | FOR expr_opt semi_colon expr_opt semi_colon expr_opt bracket_close stmt {
+    yyerror("Erreur : \'(\' manquant");
+    fprintf(stderr, " * ERREUR : \'(\' manquant\n\n");
+
+    yyerrok;
+
+    $$ = make_node_simple(NODE_FOR, NULL);
+    add_child($$, $2);
+    add_child($$, $4);
+    add_child($$, $6);
+    add_child($$, $8);
+  }
+  /*| FOR bracket_open expr_opt semi_colon expr_opt semi_colon expr_opt stmt {
+    yyerror("Erreur : \')\' manquant");
+    fprintf(stderr, " * ERREUR : \')\' manquant\n\n");
+
+    yyerrok;
+
+    $$ = make_node_simple(NODE_FOR, NULL);
+    add_child($$, $3);
+    add_child($$, $5);
+    add_child($$, $7);
+    add_child($$, $8);
+  }*/ // cause un souci de ';' sur 'a = a - 1;'
   | FOR bracket_open error bracket_close stmt {
       fprintf(stderr, " * ERREUR : mauvaise définition de la boucle for\n\n");
 
@@ -832,6 +885,7 @@ for_loop:
       add_child($$, make_node_simple(NODE_ERROR, "ERREUR : mauvaise définition de la boucle for"));
       add_child($$, $5);
   }
+  
   ;
   
   semi_colon:
