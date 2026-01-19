@@ -1,0 +1,11 @@
+class Agrandir{
+    
+}
+
+
+
+class Main {
+ public static void main (String test []){
+            int a=2;
+    }
+}

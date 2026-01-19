@@ -1,3 +1,46 @@
+<<<<<<< HEAD
 class Main {
     int x_test = []42;
+=======
+class Parent {
+    int parentVar;
+    boolean flag;
+
+    Parent() {
+        parentVar = 0;
+        flag = true;
+    }
+
+    void setParentVar (int val, String val2) {
+        parentVar = val;
+        void test() {
+            int a;
+        }
+    }
+
+    int getParentVar() {
+        return parentVar;
+    }
+>>>>>>> develop
+}
+
+class Main {
+    public static void main(String args[]) {
+        int a = 2;
+        boolean b = false;
+        String s = "Hello";
+        a = (a + 3) * 2 - 1 / 1 % 2;
+        b = !b && true || false;
+        this.parentVar = a;
+        String t = new String();
+        if (a > 0) {
+            a = a - 1;
+        } else {
+            a = a + 1;
+        }
+        for (i = 0; i < 10; i = i + 1) {
+            a = a + i;
+        }
+        return;
+    }
 }

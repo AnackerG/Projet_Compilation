@@ -9,13 +9,19 @@ public:
     explicit Lexer(const std::string& filename);
     Token nextToken();  // renvoie le token
     int peekChar();     // regarde le token (n'avance pas)
+    int getLine() const { return line; }
+    int getColumn() const { return column; }
+    std::string getCurrentLine() const { return currentLineStr; }
 
 
+
+    
 private:
     std::ifstream input;
     int line;
     int column;         
     char currentChar;
+    std::string currentLineStr;
 
     void advance();                 
     void skipWhitespaceAndComments();

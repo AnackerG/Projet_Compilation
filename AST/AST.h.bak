@@ -1,0 +1,51 @@
+/* c++ */
+#pragma once
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <iomanip>
+
+namespace AST {
+
+enum NodeType {
+    NODE_FILE,
+    EMPTY,
+    IDENTIFIER,
+    DECLARATIONS,
+    DECLARATION,
+    CLASSES,
+    CLASS,
+    FIELD,
+    TYPE,
+    INTEGER,
+    STRING_NODE,
+    EXPR_IN_BRACKETS,
+    NEGATIVE,
+    CAST
+};
+
+struct ASTNode {
+    NodeType type;
+    std::string name;
+    int int_val = 0;
+    std::string str_val;
+    std::vector<ASTNode*> children;
+
+    // simple constructor used by grammar actions
+    explicit ASTNode(NodeType t = EMPTY) : type(t) {}
+
+    // convenience member to match grammar.y usage
+    void addChild(ASTNode* child) { children.push_back(child); }
+};
+
+// factory helpers (keep signatures matching previous design)
+ASTNode* make_node(NodeType type, const std::string& name = "");
+ASTNode* make_node(NodeType type, int int_val);
+ASTNode* make_node(NodeType type, const std::string& str_val, bool is_string);
+
+// parse_declarations/parse_classes: grammar passes a std::vector<ASTNode*>* into these
+ASTNode* parse_declarations(std::vector<ASTNode*>* decl_star_node);
+ASTNode* parse_classes(std::vector<ASTNode*>* class_star_node);
+
+} // namespace AST
