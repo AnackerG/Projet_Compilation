@@ -1,6 +1,6 @@
 # Rapport d'activité - Projet Compilation GRP-13
 
-*Janvier 2026* 
+_Janvier 2026_
 
 ---
 
@@ -20,11 +20,11 @@ Le travail a été effectué selon deux modes complémentaires :
 
 Les tâches suivantes ont été distribuées entre les quatre membres de l'équipe :
 
-| Guillaume | Kévin | Thomas | Quentin |
-|-----------|-------|--------|---------|
-| • Affichage de l'AST en graphviz<br>• GP: Compte rendu réussi<br>• Ajout de fonctions de test | • Première affichage de l'AST en cmd pour tester et debugger<br>• Mise à jour de l'affichage avec graphviz pour afficher les champs quand nécessaire | • Lexer : Implémentation du lexer puis le relier avec le  parseur de Bison<br>• Implémenter un wrapper pour encapsuler l'AST (C++) car la grammaire compile en C | • Gestion des erreurs sémantiques<br>• Debug de tout <br>|
+| Guillaume                                                                                     | Kévin                                                                                                                                                | Thomas                                                                                                                                                          | Quentin                                                   |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| • Affichage de l'AST en graphviz<br>• GP: Compte rendu réussi<br>• Ajout de fonctions de test | • Première affichage de l'AST en cmd pour tester et debugger<br>• Mise à jour de l'affichage avec graphviz pour afficher les champs quand nécessaire | • Lexer : Implémentation du lexer puis le relier avec le parseur de Bison<br>• Implémenter un wrapper pour encapsuler l'AST (C++) car la grammaire compile en C | • Gestion des erreurs sémantiques<br>• Debug de tout <br> |
 
-## 4. Difficultés rencontrées 
+## 4. Difficultés rencontrées
 
 Au cours du développement, l'équipe a identifié deux difficultés principales :
 
@@ -121,11 +121,11 @@ La génération Graphviz (`AST/AST.cpp`) produit des étiquettes lisibles (ex. `
 Des tests sont fournis dans `Test/Ok` (programmes valides) et `Test/Erreurs` (déclenchement de la récupération d'erreurs).
 
 - Valides (extraits) :
-	- `Test/Ok/Base.jura` — squelette de programme minimal avec `Main`.
-	- `Test/Ok/add.jura` — déclarations/affectations et `+` (opérateurs binaires).
-	- `Test/Ok/if1.jura` — `if/else`, comparaison `==`, parenthèses imbriquées.
-	- `Test/Ok/for.jura` — boucle `for` avec init/cond/incr et expressions arithmétiques.
-	- `Test/Ok/Class.jura` — déclaration d'une classe annexe + `Main`.
+  - `Test/Ok/Base.jura` — squelette de programme minimal avec `Main`.
+  - `Test/Ok/add.jura` — déclarations/affectations et `+` (opérateurs binaires).
+  - `Test/Ok/if1.jura` — `if/else`, comparaison `==`, parenthèses imbriquées.
+  - `Test/Ok/for.jura` — boucle `for` avec init/cond/incr et expressions arithmétiques.
+  - `Test/Ok/Class.jura` — déclaration d'une classe annexe + `Main`.
 
 Exemples courts issus des fichiers :
 
@@ -154,22 +154,22 @@ class Main{
 ```
 
 - Erreurs (extraits) :
-	- `Test/Erreurs/Synt1.jura` — mots-clés isolés et `;` manquant dans `main` (récupération d'erreurs active et messages explicites).
-	- `Test/Erreurs/Lex1.jura`, `Lex2.jura` — cas lexicaux non conformes (selon le lexer).
+  - `Test/Erreurs/Synt1.jura` — mots-clés isolés et `;` manquant dans `main` (récupération d'erreurs active et messages explicites).
+  - `Test/Erreurs/Lex1.jura`, `Lex2.jura` — cas lexicaux non conformes (selon le lexer).
 
-## 8. Estimation du temps par étape 
+## 8. Estimation du temps par étape
 
 Estimation indicative par grandes étapes de cette première partie. Merci de renseigner les durées réelles avant la soutenance.
 
-| Étape | Membre(s) | Estimé (h) | Réel (h) | Commentaires |
-|---|---|---:|---:|---|
-| Conception de la grammaire (Bison) | Thomas + Quentin | 4 | 4 |  |
-| Implémentation du lexer | Thomas | 4 | 5 |  |
-| Construction de l'AST + wrappers | Thomas | 7 | 10 | Cette partie ne prend en compte que la durée d'implémentation de l'arbre, sa structure ayant déjà été définie au préalable |
-| Gestion des erreurs sémantiques | Quentin | 5 | 7 | La documentation sur la gestion des erreurs manque cruellement de particité |
-| Intégration parser ↔ AST + erreurs | Quentin + Thomas | 10 | 15 | |
-| Visualisation Graphviz (DOT/PNG) |  Guillaume| 5 | 4 |  |
-| Jeux d'essais (Ok/Erreurs) | Thomas, Guillaume, Kevin| 4 | 6 |  |
+| Étape                              | Membre(s)                | Estimé (h) | Réel (h) | Commentaires                                                                                                               |
+| ---------------------------------- | ------------------------ | ---------: | -------: | -------------------------------------------------------------------------------------------------------------------------- |
+| Conception de la grammaire (Bison) | Thomas + Quentin         |          4 |        4 |                                                                                                                            |
+| Implémentation du lexer            | Thomas                   |          4 |        5 |                                                                                                                            |
+| Construction de l'AST + wrappers   | Thomas, Kévin            |          7 |       14 | Cette partie ne prend en compte que la durée d'implémentation de l'arbre, sa structure ayant déjà été définie au préalable |
+| Gestion des erreurs sémantiques    | Quentin                  |          5 |        7 | La documentation sur la gestion des erreurs manque cruellement de particité                                                |
+| Intégration parser ↔ AST + erreurs | Quentin + Thomas         |         10 |       15 |                                                                                                                            |
+| Visualisation Graphviz (DOT/PNG)   | Guillaume                |          5 |        4 |                                                                                                                            |
+| Jeux d'essais (Ok/Erreurs)         | Thomas, Guillaume, Kevin |          4 |        6 |                                                                                                                            |
 
 ## 9. Conclusion
 
