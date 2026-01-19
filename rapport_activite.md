@@ -24,7 +24,7 @@ Les tâches suivantes ont été distribuées entre les quatre membres de l'équi
 |-----------|-------|--------|---------|
 | • Affichage de l'AST en graphviz<br>• GP: Compte rendu réussi<br>• Ajout de fonctions de test | • Première affichage de l'AST en cmd pour tester et debugger<br>• Mise à jour de l'affichage avec graphviz pour afficher les champs quand nécessaire | • Lexer : Implémentation du lexer puis le relier avec le  parseur de Bison<br>• Implémenter un wrapper pour encapsuler l'AST (C++) car la grammaire compile en C | • Gestion des erreurs sémantiques<br>• Debug de tout <br>|
 
-## 4. Difficultés rencontrées
+## 4. Difficultés rencontrées 
 
 Au cours du développement, l'équipe a identifié deux difficultés principales :
 
