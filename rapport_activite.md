@@ -38,61 +38,143 @@ La grammaire (Bison) couvre les concepts suivants : classes (avec `extends`), co
 Extrait synthétique (EBNF simplifié) issu de `parser/grammar.y` :
 
 ```bnf
-file            ::= class* class_Main
+file ::= class_star class_Main
 
-class           ::= 'class' IDENT '{' decl* '}'
-									| 'class' IDENT 'extends' IDENT '{' decl* '}'
 
-class_Main      ::= 'class' Main '{' 'public' 'static' 'void' main '(' 'String' IDENT '[' ']' ')' '{' stmt* '}' '}'
+bracket_open ::= BRACKET_OPEN
+bracket_close ::= BRACKET_CLOSE
 
-decl            ::= type IDENT ';'
-									| constructor
-									| method
+curlbracket_open ::= CURLBRACKET_OPEN
+curlbracket_close ::= CURLBRACKET_CLOSE
 
-constructor     ::= IDENT '(' params_opt ')' '{' stmt* '}'
-method          ::= type IDENT '(' params_opt ')' '{' stmt* '}'
-									| 'void' IDENT '(' params_opt ')' '{' stmt* '}'
+class_star ::= ε | class_star class
 
-params_opt      ::= ε | params
-params          ::= type IDENT (',' type IDENT)*
-type            ::= 'boolean' | 'int' | IDENT | 'String'
+class ::= CLASS IDENT curlbracket_open decl_star curlbracket_close | CLASS IDENT EXTENDS IDENT curlbracket_open decl_star curlbracket_close
 
-stmt            ::= ';'
-									| expr ';'
-									| type IDENT ';'
-									| type IDENT '=' expr ';'
-									| if_cond | for_loop
-									| '{' stmt* '}'
-									| 'return' ';' | 'return' expr ';'
-									| method
 
-if_cond         ::= 'if' '(' expr ')' stmt
-									| 'if' '(' expr ')' stmt 'else' stmt
+decl_star ::= ε | decl_star decl
+decl ::= type IDENT semi_colon | constructor | method
+constructor ::= IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close
 
-for_loop        ::= 'for' '(' expr_opt ';' expr_opt ';' expr_opt ')' stmt
 
-expr            ::= INTEGER | STRING | 'true' | 'false' | 'this' | 'null'
-									| '(' expr ')'
-									| IDENT postfix
-									| 'this' postfix
-									| 'new' (IDENT|'String') '(' lexpr_opt ')'
-									| '!' expr | '-' expr
-									| '(' type ')' expr            /* cast */
-									| expr '||' expr | expr '&&' expr
-									| expr ('=='|'!=') expr
-									| expr ('<'|'<='|'>'|'>=') expr | expr 'instanceof' type
-									| expr ('+'|'-') expr | expr ('*'|'/'|'%') expr
+method ::= type IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close | VOID IDENT bracket_open params_opt bracket_close curlbracket_open stmt_star curlbracket_close
+params_opt: ε | params
 
-postfix         ::= ε
-									| '=' expr
-									| '(' lexpr_opt ')'
-									| '.' IDENT
-									| '.' IDENT '=' expr
-									| '.' IDENT '(' lexpr_opt ')'
+params ::= type IDENT | params COMA type IDENT
 
-lexpr_opt       ::= ε | lexpr
-lexpr           ::= expr (',' expr)*
-expr_opt        ::= ε | expr
+type ::= BOOLEAN | INT | IDENT | STRING_C
+
+class_Main ::= CLASS MAIN curlbracket_open PUBLIC STATIC VOID MAIN_C bracket_open STRING_C IDENT SQUBRACKET_OPEN SQUBRACKET_CLOSE bracket_close
+
+expr ::= INTEGER | STRING 
+| TRUE | FALSE
+| THIS
+| NULL_TOKEN
+| bracket_open expr bracket_close
+| IDENT 
+| IDENT postfix_expr
+| THIS postfix_expr
+| NEW IDENT bracket_open lexpr_opt bracket_close
+| NEW STRING_C bracket_open lexpr_opt bracket_close
+| NOT expr
+| MINUS expr NEGATIVE
+| bracket_open type bracket_close expr CAST
+
+expr_deg1 ::= expr_deg1 OR expr_sans_binop
+| expr_deg2 OR expr_deg1
+| expr_deg2
+
+  
+expr_deg2 ::= expr_deg3 AND expr_deg2
+| expr_deg3
+  
+expr_deg3 ::= expr_deg3 EQUALS expr_sans_binop
+| expr_deg3 DIFFERENT expr_sans_binop
+| expr_deg4 EQUALS expr_deg3
+| expr_deg4 DIFFERENT expr_deg3
+| expr_deg4
+  
+expr_deg4 ::= expr_deg4 SMALLER expr_sans_binop
+| expr_deg4 SMALLER_OR_EQUAL expr_sans_binop
+| expr_deg4 BIGGER expr_sans_binop
+| expr_deg4 BIGGER_OR_EQUAL expr_sans_binop
+| expr_deg5 SMALLER expr_deg4
+| expr_deg5 SMALLER_OR_EQUAL expr_deg4
+| expr_deg5 BIGGER expr_deg4
+| expr_deg5 BIGGER_OR_EQUAL expr_deg4
+| expr_deg5
+
+expr_deg5 ::= expr_deg5 PLUS expr_sans_binop
+| expr_deg5 MINUS expr_sans_binop
+| expr_deg6 PLUS expr_deg5
+| expr_deg6 MINUS expr_deg5
+| expr_deg6
+  
+expr_deg6 ::= expr_deg6 TIMES expr_sans_binop
+| expr_deg6 DIVIDE expr_sans_binop
+| expr_deg6 REMAIN expr_sans_binop
+| expr_sans_binop
+  
+
+expr_sans_binop ::= INTEGER
+| STRING
+| TRUE
+| FALSE
+| THIS
+| NULL_TOKEN
+| bracket_open expr bracket_close
+| IDENT postfix_expr_sans_binop
+| THIS postfix_expr_sans_binop
+| NEW IDENT bracket_open lexpr_opt bracket_close
+| NEW STRING_C bracket_open lexpr_opt bracket_close
+| NOT expr_sans_binop
+| MINUS expr_sans_binop NEGATIVE
+| bracket_open type bracket_close expr_sans_binop CAST
+
+
+postfix_expr ::= ε
+| SET expr
+| bracket_open lexpr_opt bracket_close
+| POINT IDENT
+| POINT IDENT SET expr
+| POINT IDENT bracket_open lexpr_opt bracket_close
+| INSTANCE_OF type
+
+postfix_expr_sans_binop ::= ε
+| SET expr_sans_binop
+| bracket_open lexpr_opt bracket_close
+| POINT IDENT
+| POINT IDENT SET expr_sans_binop
+| POINT IDENT bracket_open lexpr_opt bracket_close
+| INSTANCE_OF type
+
+
+lexpr_opt ::= ε | lexpr
+
+lexpr ::= expr | lexpr COMA expr
+
+stmt_star ::= ε | stmt_star stmt
+
+stmt ::= semi_colon
+| expr semi_colon
+  | type IDENT semi_colon
+  | type IDENT SET expr semi_colon
+  | if_cond
+  | for_loop
+  | curlbracket_open stmt_star curlbracket_close
+  | RETURN semi_colon
+  | RETURN expr semi_colon
+  | method
+
+if_cond ::= IF bracket_open expr bracket_close stmt LOWER_THAN_ELSE
+| IF bracket_open expr bracket_close stmt ELSE stmt
+
+
+for_loop: FOR bracket_open expr_opt semi_colon expr_opt semi_colon expr_opt bracket_close stmt
+
+semi_colon: SEMI_COLON
+
+expr_opt ::= ε | expr
 ```
 
 Précédences (de la plus faible à la plus forte) : `=` (droite), `||`, `&&`, `== !=`, `< <= > >= instanceof`, `+ -`, `* / %`, puis unaires `-` et `!`, et le `cast`.
