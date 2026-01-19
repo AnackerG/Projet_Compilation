@@ -22,7 +22,7 @@ Les tâches suivantes ont été distribuées entre les quatre membres de l'équi
 
 | Guillaume | Kévin | Thomas | Quentin |
 |-----------|-------|--------|---------|
-| • Affichage de l'AST en graphviz<br>• GP: Compte rendu réussi<br>• Ajout de fonctions de test | • Première affichage de l'AST en cmd pour tester et debugger<br>• Mise à jour de l'affichage avec graphviz pour afficher les champs quand nécessaire | • Lexer : relier le parseur wrapper pour encapsuler l'AST (C++)<br>• Et la grammaire (compile en C) | • Gestion des erreurs sémantiques<br>• Debug de tout <br>|
+| • Affichage de l'AST en graphviz<br>• GP: Compte rendu réussi<br>• Ajout de fonctions de test | • Première affichage de l'AST en cmd pour tester et debugger<br>• Mise à jour de l'affichage avec graphviz pour afficher les champs quand nécessaire | • Lexer : Implémentation du lexer puis le relier avec le  parseur de Bison<br>• Implémenter un wrapper pour encapsuler l'AST (C++) car la grammaire compile en C | • Gestion des erreurs sémantiques<br>• Debug de tout <br>|
 
 ## 4. Difficultés rencontrées
 
@@ -164,8 +164,8 @@ Estimation indicative par grandes étapes de cette première partie. Merci de re
 | Étape | Membre(s) | Estimé (h) | Réel (h) | Commentaires |
 |---|---|---:|---:|---|
 | Conception de la grammaire (Bison) | Thomas + Quentin | 4 | 4 |  |
-| Implémentation du lexer | Thomas |  |  |  |
-| Construction de l'AST + wrappers | Thomas |  |  |  |
+| Implémentation du lexer | Thomas | 4 | 5 |  |
+| Construction de l'AST + wrappers | Thomas | 7 | 10 | Cette partie ne prend en compte que la durée d'implémentation de l'arbre, sa structure ayant déjà été définie au préalable |
 | Gestion des erreurs sémantiques | Quentin | 5 | 7 | La documentation sur la gestion des erreurs manque cruellement de particité |
 | Intégration parser ↔ AST + erreurs | Quentin + Thomas | 10 | 15 | |
 | Visualisation Graphviz (DOT/PNG) |  Guillaume| 5 | 4 |  |

@@ -59,7 +59,6 @@ void Lexer::advance() {
     }
 }
 
-
 Token Lexer::makeToken(TokenType type, const std::string& lexeme) {
     return Token{type, lexeme, line};
 }
@@ -160,23 +159,6 @@ Token Lexer::nextToken() {
     }
 
     switch (currentChar) {
-<<<<<<< HEAD
-        
-        case '[': advance(); return makeToken(TokenType::LSQBRA, "[");
-        case ']': advance(); return makeToken(TokenType::RSQBRA, "]");
-        
-        case '{': advance(); return makeToken(TokenType::LBRACE, "{");
-        case '}': advance(); return makeToken(TokenType::RBRACE, "}");
-        case '(': advance(); return makeToken(TokenType::LPAREN, "(");
-        case ')': advance(); return makeToken(TokenType::RPAREN, ")");
-        case ';': advance(); return makeToken(TokenType::SEMI, ";");
-        case ',': advance(); return makeToken(TokenType::COMMA, ",");
-        case '.': advance(); return makeToken(TokenType::DOT, ".");
-        case '+': advance(); return makeToken(TokenType::PLUS, "+");
-        case '-': advance(); return makeToken(TokenType::MINUS, "-");
-        case '*': advance(); return makeToken(TokenType::TIMES, "*");
-        case '%': advance(); return makeToken(TokenType::MOD, "%");
-=======
         case '{': advance(); return makeToken(TokenType::KW_CURLBRACKET_OPEN, "{");
         case '}': advance(); return makeToken(TokenType::KW_CURLBRACKET_CLOSE, "}");
         case '(': advance(); return makeToken(TokenType::KW_BRACKET_OPEN, "(");
@@ -191,7 +173,6 @@ Token Lexer::nextToken() {
         case '*': advance(); return makeToken(TokenType::KW_TIMES, "*");
         case '/': advance(); return makeToken(TokenType::KW_DIVIDE, "/");
         case '%': advance(); return makeToken(TokenType::KW_REMAIN, "%");
->>>>>>> develop
         case '=':
             advance();
             if (currentChar == '=') { advance(); return makeToken(TokenType::KW_EQUALS, "=="); }

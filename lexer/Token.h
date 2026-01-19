@@ -24,13 +24,6 @@ enum class TokenType {
     KW_ELSE,
     KW_INSTANCE_OF,
 
-<<<<<<< HEAD
-    // Symboles
-    LSQBRA, RSQBRA, LBRACE, RBRACE, LPAREN, RPAREN, SEMI, COMMA, DOT,
-    ASSIGN, PLUS, MINUS, TIMES, DIV, MOD,
-    EQ, NEQ, LT, LE, GT, GE,
-    AND, OR, NOT,
-=======
     // --- Symboles / opérateurs ---
     KW_CURLBRACKET_OPEN,
     KW_CURLBRACKET_CLOSE,
@@ -41,7 +34,6 @@ enum class TokenType {
     KW_POINT,
     KW_BRACKET_OPEN,
     KW_BRACKET_CLOSE,
->>>>>>> develop
 
     KW_NOT,
     KW_EQUALS,
