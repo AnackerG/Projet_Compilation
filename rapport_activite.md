@@ -22,7 +22,7 @@ Les tâches suivantes ont été distribuées entre les quatre membres de l'équi
 
 | Guillaume | Kévin | Thomas | Quentin |
 |-----------|-------|--------|---------|
-| • Affichage de l'AST en graphviz<br>• GP: Compte rendu réussi<br>• Ajout de fonctions de test | • Première affichage de l'AST en png pour tester et debugger<br>• Mise à jour de l'affichage avec graphviz pour afficher les champs quand nécessaire | • Lexer : relier le parseur wrapper pour encapsuler l'AST (C++)<br>• Et la grammaire (compile en C) | • Erreurs sémantiques<br>• Debug de tout |
+| • Affichage de l'AST en graphviz<br>• GP: Compte rendu réussi<br>• Ajout de fonctions de test | • Première affichage de l'AST en cmd pour tester et debugger<br>• Mise à jour de l'affichage avec graphviz pour afficher les champs quand nécessaire | • Lexer : relier le parseur wrapper pour encapsuler l'AST (C++)<br>• Et la grammaire (compile en C) | • Erreurs sémantiques<br>• Debug de tout |
 
 ## 4. Difficultés rencontrées
 
