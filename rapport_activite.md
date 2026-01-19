@@ -166,7 +166,8 @@ Estimation indicative par grandes étapes de cette première partie. Merci de re
 | Conception de la grammaire (Bison) | Thomas + Quentin | 4 | 4 |  |
 | Implémentation du lexer | Thomas |  |  |  |
 | Construction de l'AST + wrappers | Thomas |  |  |  |
-| Intégration parser ↔ AST + erreurs | Quentin + Thomas | 10 | 15 | La documentation sur la gestion des erreurs manque cruellement de particité |
+| Gestion des erreurs sémantiques | Quentin | 5 | 7 | La documentation sur la gestion des erreurs manque cruellement de particité |
+| Intégration parser ↔ AST + erreurs | Quentin + Thomas | 10 | 15 | |
 | Visualisation Graphviz (DOT/PNG) |  Guillaume| 5 | 4 |  |
 | Jeux d'essais (Ok/Erreurs) | Thomas, Guillaume, Kevin| 4 | 6 |  |
 
