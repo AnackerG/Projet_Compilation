@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-class Main {
-    int x_test = []42;
-=======
 class Parent {
     int parentVar;
     boolean flag;
@@ -21,7 +17,6 @@ class Parent {
     int getParentVar() {
         return parentVar;
     }
->>>>>>> develop
 }
 
 class Main {
